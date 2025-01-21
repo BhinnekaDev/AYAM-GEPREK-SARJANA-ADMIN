@@ -1,0 +1,46 @@
+"use client";
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import Profil from "@/app/profile/components/konten";
+import Sidebar from "@/components/sidebar";
+
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+const Page = () => {
+  const pengarah = useRouter();
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        toast.error(
+          "Upsss, Login dulu lah bray masa langsung maksa masuk aja 🤬😡😠!"
+        );
+        setTimeout(() => {
+          pengarah.push("/");
+        }, 2000);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [pengarah]);
+
+  return (
+    <div className="flex px-4 py-4 bg-gray-100">
+      <ToastContainer />
+
+      <div className="w-[300px] bg-gray-100 border-r border-gray-200">
+        <Sidebar />
+      </div>
+
+      <div className="flex-1 bg-gray-100 px-2">
+        <Profil />
+      </div>
+    </div>
+  );
+};
+
+export default Page;
