@@ -10,7 +10,7 @@ const useHapusAdmin = () => {
   const hapusAdmin = async (id) => {
     try {
       setSedangMemuatHapusAdmin(true);
-      const referensiAdmin = doc(database, "admi", id);
+      const referensiAdmin = doc(database, "admin", id);
       await deleteDoc(referensiAdmin);
       toast.success("Admin berhasil dihapus!");
     } catch (error) {
