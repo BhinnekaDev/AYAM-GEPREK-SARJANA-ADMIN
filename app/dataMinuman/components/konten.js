@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Card, Typography, Button } from "@material-tailwind/react";
+import ModalEditMinuman from "@/components/modalEditMinuman";
 import ModalTambahMenuMinuman from "@/components/modalTambahMenuMinuman";
 import Image from "next/image";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
@@ -56,17 +57,33 @@ const Konten = () => {
     description: "",
     image: "",
   });
-  const [modalTerbuka, setModalTerbuka] = useState(false);
-
-  // Pagination state
+  const [modalType, setModalType] = useState(""); // Track which modal to show
   const [halaman, setHalaman] = useState(1);
   const totalAdmin = menuMinuman.length;
 
   const itemsPerPage = 5;
   const totalPages = Math.ceil(totalAdmin / itemsPerPage);
 
-  const bukaModal = () => setModalTerbuka(true);
-  const tutupModal = () => setModalTerbuka(false);
+  const bukaModalTambah = () => {
+    setModalType("tambah");
+    setMenuBaru({
+      name: "",
+      category: "",
+      price: "",
+      description: "",
+      image: "",
+    });
+  };
+
+  const bukaModalEdit = (index) => {
+    setModalType("edit");
+    const item = menuMinuman[index];
+    setMenuBaru(item);
+  };
+
+  const tutupModal = () => {
+    setModalType(""); // Close the modal
+  };
 
   const ubahInputMenu = (e) => {
     const { name, value } = e.target;
@@ -86,12 +103,6 @@ const Konten = () => {
 
   const hapusMenu = (index) => {
     setMenuMinuman((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const suntingMenu = (index) => {
-    const item = menuMinuman[index];
-    setMenuBaru(item);
-    bukaModal();
   };
 
   const menuDifilter =
@@ -124,7 +135,7 @@ const Konten = () => {
             Menu Minuman
           </Typography>
           <Button
-            onClick={bukaModal}
+            onClick={bukaModalTambah}
             className="bg-blue-500 hover:bg-blue-700 shadow-lg text-white"
           >
             Tambah Menu
@@ -144,14 +155,6 @@ const Konten = () => {
           <option value="Lainnya">Minuman Non Coffe</option>
         </select>
       </Card>
-
-      <ModalTambahMenuMinuman
-        terbuka={modalTerbuka}
-        ubahStatusModal={tutupModal}
-        menuBaru={menuBaru}
-        ubahInputMenu={ubahInputMenu}
-        tambahMenu={tambahMenu}
-      />
 
       <Card className="p-6 bg-white rounded-lg shadow-lg">
         <Typography variant="h4" className="text-black font-bold mb-6">
@@ -248,7 +251,7 @@ const Konten = () => {
                   >
                     <div className="flex justify-center items-center gap-4">
                       <Button
-                        onClick={() => suntingMenu(index)}
+                        onClick={() => bukaModalEdit(index)}
                         size="sm"
                         className="text-blue-500 hover:text-blue-700 bg-transparent"
                       >
@@ -269,7 +272,6 @@ const Konten = () => {
           </table>
         </div>
 
-        {/* Pagination */}
         <div className="flex justify-between items-center mt-4">
           <Typography variant="small" color="blue-gray" className="font-normal">
             Halaman {halaman} dari {totalPages}
@@ -294,6 +296,21 @@ const Konten = () => {
           </div>
         </div>
       </Card>
+
+      <ModalTambahMenuMinuman
+        terbuka={modalType === "tambah"}
+        ubahStatusModal={tutupModal}
+        menuBaru={menuBaru}
+        ubahInputMenu={ubahInputMenu}
+        tambahMenu={tambahMenu}
+      />
+      <ModalEditMinuman
+        terbuka={modalType === "edit"}
+        ubahStatusModal={tutupModal}
+        menuDiEdit={menuBaru}
+        ubahInputMenu={ubahInputMenu}
+        simpanPerubahan={tambahMenu}
+      />
     </div>
   );
 };

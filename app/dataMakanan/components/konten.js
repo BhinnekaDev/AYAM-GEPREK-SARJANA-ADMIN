@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Card, Typography, Button } from "@material-tailwind/react";
 import ModalTambahMenuMakanan from "@/components/modalTambahMenuMakanan";
+import ModalEditMakanan from "@/components/modalEditMakanan"; // Import ModalEditMakanan
 import Image from "next/image";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
@@ -57,6 +58,8 @@ const Konten = () => {
     image: "",
   });
   const [modalTerbuka, setModalTerbuka] = useState(false);
+  const [modalEditTerbuka, setModalEditTerbuka] = useState(false); // State for the edit modal
+  const [menuDiEdit, setMenuDiEdit] = useState({}); // State to hold the item being edited
 
   // Pagination state
   const [halaman, setHalaman] = useState(1);
@@ -90,8 +93,15 @@ const Konten = () => {
 
   const suntingMenu = (index) => {
     const item = menuMakanan[index];
-    setMenuBaru(item);
-    bukaModal();
+    setMenuDiEdit(item); // Set the item being edited
+    setModalEditTerbuka(true); // Open the edit modal
+  };
+
+  const simpanPerubahan = () => {
+    setMenuMakanan((prev) =>
+      prev.map((item) => (item.name === menuDiEdit.name ? menuDiEdit : item))
+    );
+    setMenuDiEdit({}); // Clear the editing state
   };
 
   const menuDifilter =
@@ -147,15 +157,6 @@ const Konten = () => {
           <option value="Lainnya">Lainnya</option>
         </select>
       </Card>
-
-      <ModalTambahMenuMakanan
-        terbuka={modalTerbuka}
-        ubahStatusModal={tutupModal}
-        menuBaru={menuBaru}
-        ubahInputMenu={ubahInputMenu}
-        tambahMenu={tambahMenu}
-      />
-
       <Card className="p-6 bg-white rounded-lg shadow-lg">
         <Typography variant="h4" className="text-black font-bold mb-6">
           Data Makanan
@@ -297,6 +298,21 @@ const Konten = () => {
           </div>
         </div>
       </Card>
+      <ModalTambahMenuMakanan
+        terbuka={modalTerbuka}
+        ubahStatusModal={tutupModal}
+        menuBaru={menuBaru}
+        ubahInputMenu={ubahInputMenu}
+        tambahMenu={tambahMenu}
+      />
+
+      <ModalEditMakanan
+        terbuka={modalEditTerbuka}
+        ubahStatusModal={() => setModalEditTerbuka(false)}
+        menuDiEdit={menuDiEdit}
+        ubahInputMenu={ubahInputMenu}
+        simpanPerubahan={simpanPerubahan}
+      />
     </div>
   );
 };
