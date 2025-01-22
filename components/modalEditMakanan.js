@@ -45,8 +45,7 @@ const ModalEditMakanan = ({
             <option value="">Pilih Kategori</option>
             <option value="Makanan Berat">Makanan Berat</option>
             <option value="Makanan Ringan">Makanan Ringan</option>
-            <option value="Paket A">Paket A</option>
-            <option value="Lainnya">Lainnya</option>
+            <option value="Paket">Paket</option>
           </select>
 
           <Input

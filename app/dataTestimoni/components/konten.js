@@ -101,7 +101,7 @@ function Konten() {
                     </div>
                   </td>
                   <td className="p-4">{testimonial.Nama_Menu}</td>
-                  <td className="p-4 text-center">{testimonial.Rating}</td>{" "}
+                  <td className="p-4 text-center">{testimonial.Rating}</td>
                   <td className="p-4 text-left max-w-sm">
                     {testimonial.Komentar}
                   </td>

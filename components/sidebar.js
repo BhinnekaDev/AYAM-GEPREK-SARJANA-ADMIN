@@ -14,16 +14,10 @@ import {
   HomeIcon,
   UserGroupIcon,
   UserCircleIcon,
-  BuildingOffice2Icon,
   PresentationChartBarIcon,
-  InformationCircleIcon,
-  CircleStackIcon,
   ClockIcon,
-  ChartBarSquareIcon,
-  DocumentTextIcon,
   CreditCardIcon,
   DocumentPlusIcon,
-  Cog6ToothIcon,
   PowerIcon,
   UserIcon,
 } from "@heroicons/react/24/solid";
@@ -43,17 +37,12 @@ const profilAdmin = require("@/assets/images/profil.jpg");
 function Sidebar() {
   const [buka, setBuka] = useState(0);
   const tanganiKeluarAkun = useKeluarAkun();
-  const { adminData, memuatTampilkanAdminSesuaiID } =
-    useTampilkanAdminSesuaiID();
+  const { adminData } = useTampilkanAdminSesuaiID();
   const tanganiBuka = (nilai) => {
     setBuka(buka === nilai ? 0 : nilai);
   };
 
   const { navbarAktif, handlenavbarAktif } = useNavbarAktif();
-
-  if (memuatTampilkanAdminSesuaiID) {
-    return <div>Memuat data...</div>;
-  }
 
   return (
     <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5 flex flex-col">

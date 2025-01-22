@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogHeader,
@@ -10,18 +10,35 @@ import {
   Button,
 } from "@material-tailwind/react";
 import { FaFileUpload } from "react-icons/fa";
+import useTambahMakanan from "@/hooks/Backend/useTambahMakanan";
+import Memuat from "@/components/memuat";
 
-const ModalTambahMenuMakanan = ({
-  terbuka,
-  ubahStatusModal,
-  menuBaru,
-  ubahInputMenu,
-  tambahMenu,
-}) => {
+const ModalTambahMenuMakanan = ({ terbuka, ubahStatusModal, menuBaru }) => {
+  const {
+    namaMakanan,
+    setNamaMakanan,
+    kategoriMakanan,
+    setKategoriMakanan,
+    hargaMakanan,
+    setHargaMakanan,
+    deskripsiMakanan,
+    setDeskripsiMakanan,
+    gambarMakanan,
+    setGambarMakanan,
+    sedangMemuatTambahMakanan,
+    tambahMakanan,
+  } = useTambahMakanan();
+
+  useEffect(() => {
+    if (menuBaru.image) {
+      setGambarMakanan(menuBaru.image);
+    }
+  }, [menuBaru.image, setGambarMakanan]);
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      ubahInputMenu({ target: { name: "image", value: file } });
+      setGambarMakanan(file);
     }
   };
 
@@ -33,29 +50,28 @@ const ModalTambahMenuMakanan = ({
           <Input
             label="Nama Menu"
             name="name"
-            value={menuBaru.name}
-            onChange={ubahInputMenu}
+            value={namaMakanan}
+            onChange={(e) => setNamaMakanan(e.target.value)}
           />
           <select
             label="Kategori"
             name="category"
-            value={menuBaru.category}
-            onChange={ubahInputMenu}
+            value={kategoriMakanan}
+            onChange={(e) => setKategoriMakanan(e.target.value)}
             className="border-2 border-gray-300 rounded-md p-2"
           >
             <option value="">Pilih Kategori</option>
             <option value="Makanan Berat">Makanan Berat</option>
             <option value="Makanan Ringan">Makanan Ringan</option>
-            <option value="Paket A">Paket A</option>
-            <option value="Lainnya">Lainnya</option>
+            <option value="Paket">Paket</option>
           </select>
 
           <Input
             label="Harga"
             type="number"
             name="price"
-            value={menuBaru.price}
-            onChange={ubahInputMenu}
+            value={hargaMakanan}
+            onChange={(e) => setHargaMakanan(e.target.value)}
           />
           <div className="flex flex-col gap-2">
             <label
@@ -75,19 +91,19 @@ const ModalTambahMenuMakanan = ({
                 onChange={handleFileChange}
               />
             </label>
-            {menuBaru.image && (
+            {gambarMakanan && (
               <span className="text-sm text-gray-500">
-                {typeof menuBaru.image === "string"
-                  ? menuBaru.image
-                  : menuBaru.image.name}
+                {typeof gambarMakanan === "string"
+                  ? gambarMakanan
+                  : gambarMakanan.name}
               </span>
             )}
           </div>
           <Textarea
             label="Deskripsi"
             name="description"
-            value={menuBaru.description}
-            onChange={ubahInputMenu}
+            value={deskripsiMakanan}
+            onChange={(e) => setDeskripsiMakanan(e.target.value)}
           />
         </div>
       </DialogBody>
@@ -101,14 +117,20 @@ const ModalTambahMenuMakanan = ({
           Batal
         </Button>
         <Button
+          disabled={sedangMemuatTambahMakanan}
           variant="gradient"
           color="blue"
-          onClick={() => {
-            tambahMenu();
+          onClick={async () => {
+            await tambahMakanan();
             ubahStatusModal();
           }}
+          className={`${
+            sedangMemuatTambahMakanan
+              ? "cursor-not-allowed"
+              : "hover:from-blue-500"
+          }`}
         >
-          Tambahkan
+          {sedangMemuatTambahMakanan ? <Memuat /> : "Tambah"}
         </Button>
       </DialogFooter>
     </Dialog>
