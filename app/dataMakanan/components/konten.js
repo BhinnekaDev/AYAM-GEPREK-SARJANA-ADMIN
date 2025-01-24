@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Card, Typography, Button } from "@material-tailwind/react";
 import ModalTambahMenuMakanan from "@/components/modalTambahMenuMakanan";
+import ModalKonfirmasiHapusMakanan from "@/components/modalKonfirmasiHapusMakanan";
 import ModalEditMakanan from "@/components/modalEditMakanan";
 import Image from "next/image";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
@@ -9,6 +10,7 @@ const fotoMakanan = require("@/assets/images/LogoAyam.png");
 import { formatRupiah } from "@/constants/formatRupiah";
 // PENGAIT
 import useTampilkanMakanan from "@/hooks/Backend/useTampilkanMakanan";
+import useHapusMakanan from "@/hooks/Backend/useHapusAdmin";
 
 const TABLE_HEAD = ["Gambar", "Nama", "Kategori", "Harga", "Deskripsi", "Aksi"];
 
@@ -23,7 +25,9 @@ const Konten = () => {
   });
   const [modalTerbuka, setModalTerbuka] = useState(false);
   const [modalEditTerbuka, setModalEditTerbuka] = useState(false);
-  const [menuDiEdit, setMenuDiEdit] = useState({});
+  const [makananYangTerpilih, setMakananYangTerpilih] = useState(null);
+  const [bukaModalHapusMakanan, setBukaModalHapusMakanan] = useState(false);
+  const { hapusMakanan, sedangMemuatHapusMakanan } = useHapusMakanan();
 
   const {
     halaman,
@@ -33,6 +37,18 @@ const Konten = () => {
     ambilHalamanSelanjutnya,
     sedangMemuatMakanan,
   } = useTampilkanMakanan(5, kategoriDipilih);
+
+  const konfirmasiHapus = (idMakanan) => {
+    setMakananYangTerpilih(idMakanan);
+    setBukaModalHapusMakanan(true);
+  };
+  const hapus = async () => {
+    if (makananYangTerpilih) {
+      await hapusMakanan(makananYangTerpilih);
+      setBukaModalHapusMakanan(false);
+      setMakananYangTerpilih(null);
+    }
+  };
 
   const itemsPerPage = 5;
   const menuPerHalaman = daftarMakanan.slice(
@@ -49,14 +65,6 @@ const Konten = () => {
   };
 
   const tambahMenu = () => {};
-  const hapusMenu = (index) => {};
-  const suntingMenu = (index) => {
-    const item = daftarMakanan[index];
-    setMenuDiEdit(item);
-    setModalEditTerbuka(true);
-  };
-
-  const simpanPerubahan = () => {};
 
   return (
     <div className="flex flex-col gap-6">
@@ -84,7 +92,9 @@ const Konten = () => {
           <option value="Semua Kategori">Semua Kategori</option>
           <option value="Makanan Berat">Makanan Berat</option>
           <option value="Makanan Ringan">Makanan Ringan</option>
-          <option value="Paket">Paket</option>
+          <option value="Paket A">Paket A</option>
+          <option value="Paket B">Paket B</option>
+          <option value="Paket C">Paket C</option>
         </select>
       </Card>
       <Card className="p-6 bg-white rounded-lg shadow-lg">
@@ -115,32 +125,37 @@ const Konten = () => {
                 </tr>
               </thead>
               <tbody>
-                {menuPerHalaman.map((item, index) => (
-                  <tr key={item.id}>
+                {menuPerHalaman.map((makanan) => (
+                  <tr key={makanan.id}>
                     <td className="p-4 flex items-center justify-center">
                       <Image
-                        src={item.Gambar_Makanan || fotoMakanan}
-                        alt={item.Nama_Makanan}
+                        src={makanan.Gambar_Makanan || fotoMakanan}
+                        alt={makanan.Nama_Makanan}
                         width={50}
                         height={50}
                         className="rounded-md shadow-md flex items-center justify-center"
                       />
                     </td>
-                    <td className="p-4">{item.Nama_Makanan}</td>
-                    <td className="p-4">{item.Kategori_Makanan}</td>
-                    <td className="p-4">{formatRupiah(item.Harga_Makanan)}</td>
-                    <td className="p-4">{item.Deskripsi_Makanan}</td>
+                    <td className="p-4">{makanan.Nama_Makanan}</td>
+                    <td className="p-4">{makanan.Kategori_Makanan}</td>
+                    <td className="p-4">
+                      {formatRupiah(makanan.Harga_Makanan)}
+                    </td>
+                    <td className="p-4">{makanan.Deskripsi_Makanan}</td>
                     <td className="p-4">
                       <div className="flex justify-center items-center gap-4">
                         <Button
-                          onClick={() => suntingMenu(index)}
+                          onClick={() => {
+                            setMakananYangTerpilih(makanan.id);
+                            setModalEditTerbuka(true);
+                          }}
                           size="sm"
                           className="text-blue-500 hover:text-blue-700 bg-transparent"
                         >
                           <FaEdit />
                         </Button>
                         <Button
-                          onClick={() => hapusMenu(index)}
+                          onClick={() => konfirmasiHapus(makanan.id)}
                           size="sm"
                           className="text-blue-500 hover:text-blue-700 bg-transparent"
                         >
@@ -188,10 +203,16 @@ const Konten = () => {
       />
       <ModalEditMakanan
         terbuka={modalEditTerbuka}
-        ubahStatusModal={() => setModalEditTerbuka(false)}
-        menuDiEdit={menuDiEdit}
-        ubahInputMenu={ubahInputMenu}
-        simpanPerubahan={simpanPerubahan}
+        tertutup={setModalEditTerbuka}
+        makananYangTerpilih={makananYangTerpilih}
+      />
+      <ModalKonfirmasiHapusMakanan
+        terbuka={bukaModalHapusMakanan}
+        tertutup={setBukaModalHapusMakanan}
+        makananYangTerpilih={makananYangTerpilih}
+        gambarMakanan={fotoMakanan}
+        konfirmasiHapusMakanan={hapus}
+        sedangMemuatHapus={sedangMemuatHapusMakanan}
       />
     </div>
   );

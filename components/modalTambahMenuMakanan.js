@@ -63,9 +63,10 @@ const ModalTambahMenuMakanan = ({ terbuka, ubahStatusModal, menuBaru }) => {
             <option value="">Pilih Kategori</option>
             <option value="Makanan Berat">Makanan Berat</option>
             <option value="Makanan Ringan">Makanan Ringan</option>
-            <option value="Paket">Paket</option>
+            <option value="Paket A">Paket A</option>
+            <option value="Paket B">Paket B</option>
+            <option value="Paket C">Paket C</option>
           </select>
-
           <Input
             label="Harga"
             type="number"

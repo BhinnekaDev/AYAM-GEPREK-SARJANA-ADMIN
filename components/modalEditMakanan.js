@@ -1,5 +1,4 @@
-"use client";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogHeader,
@@ -10,36 +9,45 @@ import {
   Button,
 } from "@material-tailwind/react";
 import { FaFileUpload } from "react-icons/fa";
+import useSuntingMakanan from "@/hooks/Backend/useSuntingMakanan";
+import Memuat from "@/components/memuat";
 
-const ModalEditMakanan = ({
-  terbuka,
-  ubahStatusModal,
-  menuDiEdit = {},
-  ubahInputMenu,
-  simpanPerubahan,
-}) => {
+const ModalEditMakanan = ({ terbuka, tertutup, makananYangTerpilih }) => {
+  const {
+    namaMakanan,
+    kategoriMakanan,
+    suntingMakanan,
+    hargaMakanan,
+    deskripsiMakanan,
+    gambarMakanan,
+    setNamaMakanan,
+    setKategoriMakanan,
+    setHargaMakanan,
+    setDeskripsiMakanan,
+    setGambarMakanan,
+    sedangMemuatSuntingMakanan,
+  } = useSuntingMakanan(makananYangTerpilih);
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      ubahInputMenu({ target: { name: "image", value: file } });
+      setGambarMakanan(file);
     }
   };
 
   return (
-    <Dialog open={terbuka} handler={ubahStatusModal}>
+    <Dialog open={terbuka} handler={tertutup}>
       <DialogHeader>Sunting Menu Makanan</DialogHeader>
       <DialogBody>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
             label="Nama Menu"
-            name="name"
-            value={menuDiEdit.name || ""}
-            onChange={ubahInputMenu}
+            value={namaMakanan}
+            onChange={(e) => setNamaMakanan(e.target.value)}
           />
           <select
-            name="category"
-            value={menuDiEdit.category || ""}
-            onChange={ubahInputMenu}
+            value={kategoriMakanan}
+            onChange={(e) => setKategoriMakanan(e.target.value)}
             className="border-2 border-gray-300 rounded-md p-2"
           >
             <option value="">Pilih Kategori</option>
@@ -51,21 +59,20 @@ const ModalEditMakanan = ({
           <Input
             label="Harga"
             type="number"
-            name="price"
-            value={menuDiEdit.price || ""}
-            onChange={ubahInputMenu}
+            value={hargaMakanan}
+            onChange={(e) => setHargaMakanan(e.target.value)}
           />
           <div className="flex flex-col gap-2">
             <label
               className="w-full flex items-center justify-between gap-4 p-3 border border-gray-300 rounded-md cursor-pointer hover:border-blue-500"
-              htmlFor="upload-image-edit"
+              htmlFor="upload-image"
             >
               <FaFileUpload className="text-blue-500" size={20} />
               <span className="text-gray-700 text-sm w-full text-left">
                 Masukkan foto makanan
               </span>
               <input
-                id="upload-image-edit"
+                id="upload-image"
                 type="file"
                 name="image"
                 accept="image/*"
@@ -73,40 +80,37 @@ const ModalEditMakanan = ({
                 onChange={handleFileChange}
               />
             </label>
-            {menuDiEdit.image && (
+            {gambarMakanan && (
               <span className="text-sm text-gray-500">
-                {typeof menuDiEdit.image === "string"
-                  ? menuDiEdit.image
-                  : menuDiEdit.image.name}
+                {typeof gambarMakanan === "string"
+                  ? gambarMakanan
+                  : gambarMakanan.name}
               </span>
             )}
           </div>
           <Textarea
             label="Deskripsi"
-            name="description"
-            value={menuDiEdit.description || ""}
-            onChange={ubahInputMenu}
+            value={deskripsiMakanan}
+            onChange={(e) => setDeskripsiMakanan(e.target.value)}
           />
         </div>
       </DialogBody>
       <DialogFooter>
         <Button
-          variant="text"
-          color="red"
-          onClick={ubahStatusModal}
-          className="mr-2"
-        >
-          Batal
-        </Button>
-        <Button
+          disabled={sedangMemuatSuntingMakanan}
           variant="gradient"
           color="blue"
-          onClick={() => {
-            simpanPerubahan();
-            ubahStatusModal();
+          onClick={async () => {
+            await suntingMakanan();
+            tertutup(false);
           }}
+          className={`${
+            sedangMemuatSuntingMakanan
+              ? "cursor-not-allowed"
+              : "hover:from-blue-500"
+          }`}
         >
-          Simpan Perubahan
+          {sedangMemuatSuntingMakanan ? <Memuat /> : "Simpan Perubahan"}
         </Button>
       </DialogFooter>
     </Dialog>

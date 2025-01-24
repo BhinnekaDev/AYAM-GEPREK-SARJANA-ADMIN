@@ -9,15 +9,13 @@ const useHapusMakanan = () => {
   const [sedangMemuatHapusMakanan, setSedangMemuatHapusMakanan] =
     useState(false);
 
-  const hapusMakanan = async (idMakanan, gambarMakanan) => {
+  const hapusMakanan = async (idMakanan) => {
     try {
       setSedangMemuatHapusMakanan(true);
 
-      if (gambarMakanan) {
-        const storage = getStorage();
-        const gambarRef = ref(storage, gambarMakanan);
-        await deleteObject(gambarRef);
-      }
+      const storage = getStorage();
+      const gambarRef = ref(storage, `Makanan/${idMakanan}`);
+      await deleteObject(gambarRef);
 
       const referensiMakanan = doc(database, "makanan", idMakanan);
       await deleteDoc(referensiMakanan);
