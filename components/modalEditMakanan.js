@@ -83,11 +83,17 @@ const ModalEditMakanan = ({ terbuka, tertutup, makananYangTerpilih }) => {
               />
             </label>
             {gambarMakanan && (
-              <span className="text-sm text-gray-500">
-                {typeof gambarMakanan === "string"
-                  ? gambarMakanan
-                  : gambarMakanan.name}
-              </span>
+              <div className="mt-3">
+                <img
+                  src={
+                    typeof gambarMakanan === "string"
+                      ? gambarMakanan
+                      : URL.createObjectURL(gambarMakanan)
+                  }
+                  alt="Preview Makanan"
+                  className="w-full h-auto rounded-md"
+                />
+              </div>
             )}
           </div>
           <Textarea

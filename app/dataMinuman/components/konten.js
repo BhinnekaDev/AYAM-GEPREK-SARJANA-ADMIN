@@ -1,54 +1,20 @@
 "use client";
 import React, { useState } from "react";
 import { Card, Typography, Button } from "@material-tailwind/react";
-import ModalEditMinuman from "@/components/modalEditMinuman";
 import ModalTambahMenuMinuman from "@/components/modalTambahMenuMinuman";
+import ModalKonfirmasiHapusMinuman from "@/components/modalKonfirmasiHapusMinuman";
+import ModalEditMinuman from "@/components/modalEditMinuman";
 import Image from "next/image";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { formatRupiah } from "@/constants/formatRupiah";
+import useTampilkanMinuman from "@/hooks/Backend/useTampilkanMinuman";
+import useHapusMinuman from "@/hooks/Backend/useHapusMinuman";
 
 const fotoMinuman = require("@/assets/images/LogoAyam.png");
-const menuAwal = [
-  {
-    name: "Es Teh Manis",
-    category: "Minuman",
-    price: "Rp 8.000",
-    description: "Es teh manis segar",
-    image: fotoMinuman,
-  },
-  {
-    name: "Jus Mangga",
-    category: "Minuman",
-    price: "Rp 15.000",
-    description: "Jus mangga segar dan manis",
-    image: fotoMinuman,
-  },
-  {
-    name: "Es Kopi Susu",
-    category: "Minuman",
-    price: "Rp 18.000",
-    description: "Kopi susu dengan es yang menyegarkan",
-    image: fotoMinuman,
-  },
-  {
-    name: "Teh Tarik",
-    category: "Minuman",
-    price: "Rp 12.000",
-    description: "Teh tarik khas dengan rasa lembut",
-    image: fotoMinuman,
-  },
-  {
-    name: "Air Mineral",
-    category: "Minuman",
-    price: "Rp 5.000",
-    description: "Air mineral dingin dan menyegarkan",
-    image: fotoMinuman,
-  },
-];
 
 const TABLE_HEAD = ["Gambar", "Nama", "Kategori", "Harga", "Deskripsi", "Aksi"];
 
 const Konten = () => {
-  const [menuMinuman, setMenuMinuman] = useState(menuAwal);
   const [kategoriDipilih, setKategoriDipilih] = useState("Semua Kategori");
   const [menuBaru, setMenuBaru] = useState({
     name: "",
@@ -57,74 +23,52 @@ const Konten = () => {
     description: "",
     image: "",
   });
-  const [modalType, setModalType] = useState(""); // Track which modal to show
-  const [halaman, setHalaman] = useState(1);
-  const totalAdmin = menuMinuman.length;
+  const [modalTerbuka, setModalTerbuka] = useState(false);
+  const [modalEditTerbuka, setModalEditTerbuka] = useState(false);
+  const [minumanYangTerpilih, setMinumanYangTerpilih] = useState(null);
+  const [bukaModalHapusMinuman, setBukaModalHapusMinuman] = useState(false);
+
+  const { hapusMinuman, sedangMemuatHapusMinuman } = useHapusMinuman();
+
+  const {
+    halaman,
+    totalMinuman,
+    daftarMinuman,
+    ambilHalamanSebelumnya,
+    ambilHalamanSelanjutnya,
+    sedangMemuatMinuman,
+  } = useTampilkanMinuman(5, kategoriDipilih);
 
   const itemsPerPage = 5;
-  const totalPages = Math.ceil(totalAdmin / itemsPerPage);
+  const menuPerHalaman = daftarMinuman.slice(
+    (halaman - 1) * itemsPerPage,
+    halaman * itemsPerPage
+  );
 
-  const bukaModalTambah = () => {
-    setModalType("tambah");
-    setMenuBaru({
-      name: "",
-      category: "",
-      price: "",
-      description: "",
-      image: "",
-    });
+  const bukaModal = () => setModalTerbuka(true);
+  const tutupModal = () => setModalTerbuka(false);
+
+  const konfirmasiHapus = (idMinuman) => {
+    setMinumanYangTerpilih(idMinuman);
+    setBukaModalHapusMinuman(true);
   };
 
-  const bukaModalEdit = (index) => {
-    setModalType("edit");
-    const item = menuMinuman[index];
-    setMenuBaru(item);
-  };
-
-  const tutupModal = () => {
-    setModalType(""); // Close the modal
+  const hapus = async () => {
+    if (minumanYangTerpilih) {
+      await hapusMinuman(minumanYangTerpilih);
+      // Menghapus minuman dari state daftarMinuman setelah berhasil dihapus
+      const updatedMinuman = daftarMinuman.filter(
+        (minuman) => minuman.id !== minumanYangTerpilih
+      );
+      // Pastikan untuk mengupdate state `daftarMinuman`
+      setBukaModalHapusMinuman(false);
+      setMinumanYangTerpilih(null);
+    }
   };
 
   const ubahInputMenu = (e) => {
     const { name, value } = e.target;
     setMenuBaru((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const tambahMenu = () => {
-    setMenuMinuman((prev) => [...prev, { ...menuBaru }]);
-    setMenuBaru({
-      name: "",
-      category: "",
-      price: "",
-      description: "",
-      image: "",
-    });
-  };
-
-  const hapusMenu = (index) => {
-    setMenuMinuman((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const menuDifilter =
-    kategoriDipilih === "Semua Kategori"
-      ? menuMinuman
-      : menuMinuman.filter((item) => item.category === kategoriDipilih);
-
-  const menuPerHalaman = menuDifilter.slice(
-    (halaman - 1) * itemsPerPage,
-    halaman * itemsPerPage
-  );
-
-  const ambilHalamanSebelumnya = () => {
-    if (halaman > 1) {
-      setHalaman(halaman - 1);
-    }
-  };
-
-  const ambilHalamanBerikutnya = () => {
-    if (halaman < totalPages) {
-      setHalaman(halaman + 1);
-    }
   };
 
   return (
@@ -135,7 +79,7 @@ const Konten = () => {
             Menu Minuman
           </Typography>
           <Button
-            onClick={bukaModalTambah}
+            onClick={bukaModal}
             className="bg-blue-500 hover:bg-blue-700 shadow-lg text-white"
           >
             Tambah Menu
@@ -151,130 +95,86 @@ const Konten = () => {
           className="w-full px-3 py-2 border border-gray-300 rounded-lg text-blue-gray-900 text-sm "
         >
           <option value="Semua Kategori">Semua Kategori</option>
-          <option value="Minuman">Minuman Coffe</option>
-          <option value="Lainnya">Minuman Non Coffe</option>
+          <option value="Minuman Coffe">Minuman Coffe</option>
+          <option value="Minuman Non Coffe">Minuman Non Coffe</option>
         </select>
       </Card>
-
       <Card className="p-6 bg-white rounded-lg shadow-lg">
         <Typography variant="h4" className="text-black font-bold mb-6">
           Data Minuman
         </Typography>
         <div>
-          <table className="w-full min-w-max table-auto text-center">
-            <thead className="text-center">
-              <tr>
-                {TABLE_HEAD.map((head) => (
-                  <th
-                    key={head}
-                    className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
-                  >
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal leading-none opacity-70"
+          {sedangMemuatMinuman ? (
+            <p>Memuat data minuman...</p>
+          ) : (
+            <table className="w-full min-w-max table-auto text-center">
+              <thead className="text-center">
+                <tr>
+                  {TABLE_HEAD.map((head) => (
+                    <th
+                      key={head}
+                      className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
                     >
-                      {head}
-                    </Typography>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {menuPerHalaman.map((item, index) => (
-                <tr key={index}>
-                  <td
-                    className={
-                      index === menuPerHalaman.length - 1
-                        ? "p-4 flex items-center justify-center"
-                        : "p-4 border-b border-blue-gray-50 flex items-center justify-center"
-                    }
-                  >
-                    <Image
-                      src={item.image}
-                      alt={item.name}
-                      width={50}
-                      height={50}
-                      className="rounded-md shadow-md flex items-center justify-center"
-                    />
-                  </td>
-                  <td
-                    className={
-                      index === menuPerHalaman.length - 1
-                        ? "p-4"
-                        : "p-4 border-b border-blue-gray-50"
-                    }
-                  >
-                    <Typography variant="small" color="blue-gray ">
-                      {item.name}
-                    </Typography>
-                  </td>
-                  <td
-                    className={
-                      index === menuPerHalaman.length - 1
-                        ? "p-4"
-                        : "p-4 border-b border-blue-gray-50"
-                    }
-                  >
-                    <Typography variant="small" color="blue-gray ">
-                      {item.category}
-                    </Typography>
-                  </td>
-                  <td
-                    className={
-                      index === menuPerHalaman.length - 1
-                        ? "p-4"
-                        : "p-4 border-b border-blue-gray-50"
-                    }
-                  >
-                    <Typography variant="small" color="blue-gray ">
-                      {item.price}
-                    </Typography>
-                  </td>
-                  <td
-                    className={
-                      index === menuPerHalaman.length - 1
-                        ? "p-4"
-                        : "p-4 border-b border-blue-gray-50"
-                    }
-                  >
-                    <Typography variant="small" color="blue-gray ">
-                      {item.description}
-                    </Typography>
-                  </td>
-                  <td
-                    className={
-                      index === menuPerHalaman.length - 1
-                        ? "p-4"
-                        : "p-4 border-b border-blue-gray-50"
-                    }
-                  >
-                    <div className="flex justify-center items-center gap-4">
-                      <Button
-                        onClick={() => bukaModalEdit(index)}
-                        size="sm"
-                        className="text-blue-500 hover:text-blue-700 bg-transparent"
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal leading-none opacity-70"
                       >
-                        <FaEdit />
-                      </Button>
-                      <Button
-                        onClick={() => hapusMenu(index)}
-                        size="sm"
-                        className="text-blue-500 hover:text-blue-700 bg-transparent"
-                      >
-                        <FaTrashAlt />
-                      </Button>
-                    </div>
-                  </td>
+                        {head}
+                      </Typography>
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {menuPerHalaman.map((minuman) => (
+                  <tr key={minuman.id}>
+                    <td className="p-4 flex items-center justify-center">
+                      <Image
+                        src={minuman.Gambar_Minuman || fotoMinuman}
+                        alt={minuman.Nama_Minuman}
+                        width={50}
+                        height={50}
+                        className="rounded-md shadow-md"
+                      />
+                    </td>
+                    <td className="p-4">{minuman.Nama_Minuman}</td>
+                    <td className="p-4">{minuman.Kategori_Minuman}</td>
+                    <td className="p-4">
+                      {formatRupiah(minuman.Harga_Minuman)}
+                    </td>
+                    <td className="p-4">{minuman.Deskripsi_Minuman}</td>
+                    <td className="p-4">
+                      <div className="flex justify-center items-center gap-4">
+                        <Button
+                          onClick={() => {
+                            setMinumanYangTerpilih(minuman.id);
+                            setModalEditTerbuka(true);
+                          }}
+                          size="sm"
+                          className="text-blue-500 hover:text-blue-700 bg-transparent"
+                        >
+                          <FaEdit />
+                        </Button>
+                        <Button
+                          onClick={() => konfirmasiHapus(minuman.id)}
+                          size="sm"
+                          className="text-blue-500 hover:text-blue-700 bg-transparent"
+                        >
+                          <FaTrashAlt />
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
 
         <div className="flex justify-between items-center mt-4">
           <Typography variant="small" color="blue-gray" className="font-normal">
-            Halaman {halaman} dari {totalPages}
+            Halaman {halaman} dari {Math.ceil(totalMinuman / itemsPerPage)}
           </Typography>
           <div className="flex items-center gap-2">
             <Button
@@ -286,30 +186,33 @@ const Konten = () => {
               Sebelumnya
             </Button>
             <Button
-              onClick={ambilHalamanBerikutnya}
+              onClick={ambilHalamanSelanjutnya}
               variant="outlined"
               size="sm"
-              disabled={halaman === totalPages}
+              disabled={halaman === Math.ceil(totalMinuman / itemsPerPage)}
             >
               Berikutnya
             </Button>
           </div>
         </div>
       </Card>
-
       <ModalTambahMenuMinuman
-        terbuka={modalType === "tambah"}
+        terbuka={modalTerbuka}
         ubahStatusModal={tutupModal}
         menuBaru={menuBaru}
         ubahInputMenu={ubahInputMenu}
-        tambahMenu={tambahMenu}
       />
       <ModalEditMinuman
-        terbuka={modalType === "edit"}
-        ubahStatusModal={tutupModal}
-        menuDiEdit={menuBaru}
-        ubahInputMenu={ubahInputMenu}
-        simpanPerubahan={tambahMenu}
+        terbuka={modalEditTerbuka}
+        tertutup={setModalEditTerbuka}
+        minumanYangTerpilih={minumanYangTerpilih}
+      />
+      <ModalKonfirmasiHapusMinuman
+        terbuka={bukaModalHapusMinuman}
+        tertutup={setBukaModalHapusMinuman}
+        minumanYangTerpilih={minumanYangTerpilih}
+        konfirmasiHapusMinuman={hapus}
+        sedangMemuatHapus={sedangMemuatHapusMinuman}
       />
     </div>
   );

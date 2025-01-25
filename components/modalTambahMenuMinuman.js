@@ -10,18 +10,29 @@ import {
   Button,
 } from "@material-tailwind/react";
 import { FaFileUpload } from "react-icons/fa";
+import useTambahMinuman from "@/hooks/Backend/useTambahMinuman"; // Pastikan ini adalah hook yang benar
+import Memuat from "@/components/memuat"; // Komponen loading jika diperlukan
 
-const ModalTambahMenuMinuman = ({
-  terbuka,
-  ubahStatusModal,
-  menuBaru,
-  ubahInputMenu,
-  tambahMenu,
-}) => {
+const ModalTambahMenuMinuman = ({ terbuka, ubahStatusModal }) => {
+  const {
+    namaMinuman,
+    setNamaMinuman,
+    kategoriMinuman,
+    setKategoriMinuman,
+    hargaMinuman,
+    setHargaMinuman,
+    deskripsiMinuman,
+    setDeskripsiMinuman,
+    gambarMinuman,
+    setGambarMinuman,
+    sedangMemuatTambahMinuman,
+    tambahMinuman, // Pastikan ini adalah fungsi untuk menambah minumank
+  } = useTambahMinuman(); // Menggunakan hook untuk pengelolaan minumank
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      ubahInputMenu({ target: { name: "image", value: file } });
+      setGambarMinuman(file);
     }
   };
 
@@ -33,25 +44,26 @@ const ModalTambahMenuMinuman = ({
           <Input
             label="Nama Minuman"
             name="name"
-            value={menuBaru.name}
-            onChange={ubahInputMenu}
+            value={namaMinuman}
+            onChange={(e) => setNamaMinuman(e.target.value)}
           />
           <select
             label="Kategori"
             name="category"
-            value={menuBaru.category}
-            onChange={ubahInputMenu}
+            value={kategoriMinuman}
+            onChange={(e) => setKategoriMinuman(e.target.value)}
             className="border-2 border-gray-300 rounded-md p-2"
           >
             <option value="">Pilih Kategori</option>
-            <option value="Makanan Berat">Minuman Coffe</option>
-            <option value="Makanan Ringan">Minumman Non Coffe</option>
+            <option value="Minuman Coffee">Minuman Coffee</option>
+            <option value="Minuman Non Coffee">Minuman Non Coffee</option>
           </select>
           <Input
             label="Harga"
+            type="number"
             name="price"
-            value={menuBaru.price}
-            onChange={ubahInputMenu}
+            value={hargaMinuman}
+            onChange={(e) => setHargaMinuman(e.target.value)}
           />
           <div className="flex flex-col gap-2">
             <label
@@ -71,19 +83,19 @@ const ModalTambahMenuMinuman = ({
                 onChange={handleFileChange}
               />
             </label>
-            {menuBaru.image && (
+            {gambarMinuman && (
               <span className="text-sm text-gray-500">
-                {typeof menuBaru.image === "string"
-                  ? menuBaru.image
-                  : menuBaru.image.name}
+                {typeof gambarMinuman === "string"
+                  ? gambarMinuman
+                  : gambarMinuman.name}
               </span>
             )}
           </div>
           <Textarea
             label="Deskripsi Minuman"
             name="description"
-            value={menuBaru.description}
-            onChange={ubahInputMenu}
+            value={deskripsiMinuman}
+            onChange={(e) => setDeskripsiMinuman(e.target.value)}
           />
         </div>
       </DialogBody>
@@ -97,14 +109,16 @@ const ModalTambahMenuMinuman = ({
           Batal
         </Button>
         <Button
+          disabled={sedangMemuatTambahMinuman}
           variant="gradient"
           color="blue"
-          onClick={() => {
-            tambahMenu();
+          onClick={async () => {
+            await tambahMinuman();
             ubahStatusModal();
           }}
+          className={`${sedangMemuatTambahMinuman ? "cursor-not-allowed" : ""}`}
         >
-          Tambahkan
+          {sedangMemuatTambahMinuman ? <Memuat /> : "Tambah"}
         </Button>
       </DialogFooter>
     </Dialog>
