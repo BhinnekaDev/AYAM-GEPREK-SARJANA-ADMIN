@@ -24,7 +24,7 @@ const ModalTambahMenuMakanan = ({ terbuka, ubahStatusModal, menuBaru }) => {
 
   return (
     <Dialog open={terbuka} handler={ubahStatusModal}>
-      <DialogHeader>Tambah Menu </DialogHeader>
+      <DialogHeader>Tambah Menu Makanan Baru</DialogHeader>
       <DialogBody>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input label="Nama Menu" name="name" value={namaMakanan} onChange={(e) => setNamaMakanan(e.target.value)} />
