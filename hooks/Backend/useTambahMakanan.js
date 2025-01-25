@@ -13,44 +13,76 @@ const useTambahMakanan = () => {
   const [sedangMemuatTambahMakanan, setSedangMemuatTambahMakanan] =
     useState(false);
 
+  const sanitizeInput = (input) => input.replace(/[^a-zA-Z\s]/g, "").trim();
+
+  const validateHarga = (harga) => /^[0-9]*\.?[0-9]+$/.test(harga);
+
+  const resetForm = () => {
+    setNamaMakanan("");
+    setKategoriMakanan("");
+    setHargaMakanan("");
+    setDeskripsiMakanan("");
+    setGambarMakanan(null);
+  };
+
   const tambahMakanan = async () => {
+    !namaMakanan || !kategoriMakanan || !hargaMakanan || !deskripsiMakanan
+      ? toast.error("Semua field wajib diisi!")
+      : null;
+
+    const sanitizedNamaMakanan = sanitizeInput(namaMakanan);
+    const sanitizedDeskripsiMakanan = sanitizeInput(deskripsiMakanan);
+
+    !sanitizedNamaMakanan || !sanitizedDeskripsiMakanan
+      ? toast.error("Nama dan deskripsi makanan hanya boleh mengandung huruf!")
+      : null;
+
+    !validateHarga(hargaMakanan)
+      ? toast.error(
+          "Harga makanan hanya boleh berupa angka tanpa tanda + atau -!"
+        )
+      : null;
+
     if (
       !namaMakanan ||
       !kategoriMakanan ||
       !hargaMakanan ||
-      !deskripsiMakanan
+      !deskripsiMakanan ||
+      !sanitizedNamaMakanan ||
+      !sanitizedDeskripsiMakanan ||
+      !validateHarga(hargaMakanan)
     ) {
-      toast.error("Semua field wajib diisi!");
       return;
     }
 
     setSedangMemuatTambahMakanan(true);
 
     try {
-      let gambarUrl = "";
-      if (gambarMakanan) {
-        const gambarRef = ref(storage, `Makanan/${gambarMakanan.name}`);
-        await uploadBytes(gambarRef, gambarMakanan);
-        gambarUrl = await getDownloadURL(gambarRef);
-      }
+      const gambarUrl = gambarMakanan
+        ? await (() => {
+            const sanitizedFileName = `${sanitizedNamaMakanan.replace(
+              /\s+/g,
+              "_"
+            )}.jpg`;
+            const gambarRef = ref(storage, `Makanan/${sanitizedFileName}`);
+            return uploadBytes(gambarRef, gambarMakanan).then(() =>
+              getDownloadURL(gambarRef)
+            );
+          })()
+        : "";
 
       const makananCollection = collection(database, "makanan");
       await addDoc(makananCollection, {
-        Nama_Makanan: namaMakanan,
+        Nama_Makanan: sanitizedNamaMakanan,
         Kategori_Makanan: kategoriMakanan,
         Harga_Makanan: parseFloat(hargaMakanan),
-        Deskripsi_Makanan: deskripsiMakanan,
+        Deskripsi_Makanan: sanitizedDeskripsiMakanan,
         Gambar_Makanan: gambarUrl,
-        dibuatPada: serverTimestamp(),
+        Tanggal_Pembuatan: serverTimestamp(),
       });
 
       toast.success("Makanan berhasil ditambahkan!");
-
-      setNamaMakanan("");
-      setKategoriMakanan("");
-      setHargaMakanan("");
-      setDeskripsiMakanan("");
-      setGambarMakanan(null);
+      resetForm();
     } catch (error) {
       console.error("Gagal menambahkan makanan:", error);
       toast.error("Terjadi kesalahan saat menambahkan makanan.");

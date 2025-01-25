@@ -10,7 +10,7 @@ const fotoMakanan = require("@/assets/images/LogoAyam.png");
 import { formatRupiah } from "@/constants/formatRupiah";
 // PENGAIT
 import useTampilkanMakanan from "@/hooks/Backend/useTampilkanMakanan";
-import useHapusMakanan from "@/hooks/Backend/useHapusAdmin";
+import useHapusMakanan from "@/hooks/Backend/useHapusMakanan";
 
 const TABLE_HEAD = ["Gambar", "Nama", "Kategori", "Harga", "Deskripsi", "Aksi"];
 
@@ -210,7 +210,6 @@ const Konten = () => {
         terbuka={bukaModalHapusMakanan}
         tertutup={setBukaModalHapusMakanan}
         makananYangTerpilih={makananYangTerpilih}
-        gambarMakanan={fotoMakanan}
         konfirmasiHapusMakanan={hapus}
         sedangMemuatHapus={sedangMemuatHapusMakanan}
       />

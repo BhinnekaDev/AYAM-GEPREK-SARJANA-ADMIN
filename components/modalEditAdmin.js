@@ -36,8 +36,8 @@ function ModalEditAdmin({ terbuka, tertutup, admin, reloadData }) {
 
     try {
       await updateAdmin(admin.id, updatedAdmin);
-      reloadData(); // Refresh daftar admin
-      tertutup(); // Tutup modal
+      reloadData();
+      tertutup();
     } catch (error) {
       console.error("Error updating admin:", error);
     }

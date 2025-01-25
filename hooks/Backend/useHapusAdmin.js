@@ -1,39 +1,26 @@
 import { useState } from "react";
 import { doc, deleteDoc } from "firebase/firestore";
-import { getStorage, ref, deleteObject } from "firebase/storage";
 import { toast } from "react-toastify";
 // PERPUSTAKAAN KAMI
 import { database } from "@/lib/firebaseConfig";
 
-const useHapusMakanan = () => {
-  const [sedangMemuatHapusMakanan, setSedangMemuatHapusMakanan] =
-    useState(false);
+const useHapusAdmin = () => {
+  const [sedangMemuatHapusAdmin, setSedangMemuatHapusAdmin] = useState(false);
 
-  const hapusMakanan = async (idMakanan, gambarMakanan) => {
+  const hapusAdmin = async (id) => {
+    setSedangMemuatHapusAdmin(true);
+
     try {
-      setSedangMemuatHapusMakanan(true);
-
-      if (gambarMakanan) {
-        const storage = getStorage();
-        const gambarRef = ref(storage, gambarMakanan);
-        await deleteObject(gambarRef);
-      }
-
-      const referensiMakanan = doc(database, "makanan", idMakanan);
-      await deleteDoc(referensiMakanan);
-
-      toast.success("Makanan berhasil dihapus!");
+      await deleteDoc(doc(database, "admin", id));
+      toast.success("Admin berhasil dihapus!");
     } catch (error) {
-      toast.error("Terjadi kesalahan saat menghapus makanan: " + error.message);
+      toast.error(`Terjadi kesalahan saat menghapus admin: ${error.message}`);
     } finally {
-      setSedangMemuatHapusMakanan(false);
+      setSedangMemuatHapusAdmin(false);
     }
   };
 
-  return {
-    sedangMemuatHapusMakanan,
-    hapusMakanan,
-  };
+  return { sedangMemuatHapusAdmin, hapusAdmin };
 };
 
-export default useHapusMakanan;
+export default useHapusAdmin;

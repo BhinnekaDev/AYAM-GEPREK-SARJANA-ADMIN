@@ -30,33 +30,41 @@ export default function useSuntingMakanan(idMakanan) {
       const makananRef = doc(database, "makanan", idMakanan);
       const docSnap = await getDoc(makananRef);
 
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        setNamaMakanan(data.Nama_Makanan);
-        setKategoriMakanan(data.Kategori_Makanan);
-        setHargaMakanan(data.Harga_Makanan);
-        setDeskripsiMakanan(data.Deskripsi_Makanan);
-        setGambarMakanan(data.Gambar_Makanan);
-        setGambarLama(data.Gambar_Makanan);
-      } else {
-        toast.error("Data makanan tidak ditemukan!");
-      }
+      docSnap.exists()
+        ? (() => {
+            const data = docSnap.data();
+            setNamaMakanan(data.Nama_Makanan);
+            setKategoriMakanan(data.Kategori_Makanan);
+            setHargaMakanan(data.Harga_Makanan);
+            setDeskripsiMakanan(data.Deskripsi_Makanan);
+            setGambarMakanan(data.Gambar_Makanan);
+            setGambarLama(data.Gambar_Makanan);
+          })()
+        : toast.error("Data makanan tidak ditemukan!");
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Terjadi kesalahan saat mengambil data makanan");
     }
   };
 
-  const validasiFormulir = () =>
-    !namaMakanan
-      ? (toast.error("Masukkan nama makanan"), false)
+  const validasiFormulir = () => {
+    const regexNamaDeskripsi = /^[a-zA-Z\s]+$/;
+    const regexHarga = /^[0-9]+(\.[0-9]{1,2})?$/;
+
+    return !namaMakanan || !regexNamaDeskripsi.test(namaMakanan)
+      ? (toast.error("Nama makanan hanya boleh mengandung huruf dan spasi!"),
+        false)
       : !kategoriMakanan
-      ? (toast.error("Pilih kategori makanan"), false)
-      : !hargaMakanan
-      ? (toast.error("Masukkan harga makanan"), false)
-      : !deskripsiMakanan
-      ? (toast.error("Masukkan deskripsi makanan"), false)
+      ? (toast.error("Pilih kategori makanan!"), false)
+      : !hargaMakanan || !regexHarga.test(hargaMakanan)
+      ? (toast.error("Harga makanan harus berupa angka positif!"), false)
+      : !deskripsiMakanan || !regexNamaDeskripsi.test(deskripsiMakanan)
+      ? (toast.error(
+          "Deskripsi makanan hanya boleh mengandung huruf dan spasi!"
+        ),
+        false)
       : true;
+  };
 
   const suntingMakanan = async () => {
     setSedangMemuatSuntingMakanan(true);
@@ -70,14 +78,17 @@ export default function useSuntingMakanan(idMakanan) {
       let gambarUrl = gambarMakanan;
 
       if (gambarMakanan instanceof File) {
-        if (gambarLama) {
-          const storage = getStorage();
-          const gambarLamaRef = ref(storage, gambarLama);
-          await deleteObject(gambarLamaRef);
-        }
+        gambarLama &&
+          (await (() => {
+            const storage = getStorage();
+            const gambarLamaRef = ref(storage, gambarLama);
+            return deleteObject(gambarLamaRef);
+          })());
 
         const storage = getStorage();
-        const gambarRef = ref(storage, `Makanan/${gambarMakanan.name}`);
+        const sanitizedNama = namaMakanan.replace(/[^a-zA-Z0-9]/g, "_");
+        const gambarRef = ref(storage, `Makanan/${sanitizedNama}.jpg`);
+
         await uploadBytes(gambarRef, gambarMakanan);
         gambarUrl = await getDownloadURL(gambarRef);
       }
@@ -90,6 +101,7 @@ export default function useSuntingMakanan(idMakanan) {
         Deskripsi_Makanan: deskripsiMakanan,
         Gambar_Makanan: gambarUrl,
       });
+
       toast.success("Data makanan diperbarui!");
     } catch (error) {
       toast.error("Gagal menyunting data makanan: " + error.message);
@@ -99,9 +111,7 @@ export default function useSuntingMakanan(idMakanan) {
   };
 
   useEffect(() => {
-    if (idMakanan) {
-      ambilDataMakanan();
-    }
+    idMakanan && ambilDataMakanan();
   }, [idMakanan]);
 
   return {

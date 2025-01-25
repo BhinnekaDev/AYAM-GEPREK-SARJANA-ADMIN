@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { doc, deleteDoc } from "firebase/firestore";
+import { doc, deleteDoc, getDoc } from "firebase/firestore";
 import { getStorage, ref, deleteObject } from "firebase/storage";
 import { toast } from "react-toastify";
 // PERPUSTAKAAN KAMI
@@ -13,14 +13,37 @@ const useHapusMakanan = () => {
     try {
       setSedangMemuatHapusMakanan(true);
 
-      const storage = getStorage();
-      const gambarRef = ref(storage, `Makanan/${idMakanan}`);
-      await deleteObject(gambarRef);
-
       const referensiMakanan = doc(database, "makanan", idMakanan);
-      await deleteDoc(referensiMakanan);
+      const snapshot = await getDoc(referensiMakanan);
 
-      toast.success("Makanan berhasil dihapus!");
+      snapshot.exists()
+        ? (async () => {
+            const dataMakanan = snapshot.data();
+            const gambarUrl = dataMakanan.Gambar_Makanan;
+
+            gambarUrl
+              ? (async () => {
+                  const storage = getStorage();
+                  const gambarRef = ref(storage, gambarUrl);
+
+                  try {
+                    await deleteObject(gambarRef);
+                  } catch (error) {
+                    console.error(
+                      "Gagal menghapus gambar dari storage:",
+                      error
+                    );
+                    toast.error(
+                      "Gambar tidak dapat dihapus, tetapi data lainnya tetap dihapus."
+                    );
+                  }
+                })()
+              : toast.warn("Tidak ada gambar yang terkait dengan makanan ini.");
+
+            await deleteDoc(referensiMakanan);
+            toast.success("Makanan berhasil dihapus!");
+          })()
+        : toast.error("Data makanan tidak ditemukan!");
     } catch (error) {
       toast.error("Terjadi kesalahan saat menghapus makanan: " + error.message);
     } finally {

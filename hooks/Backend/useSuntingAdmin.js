@@ -3,6 +3,11 @@ import { toast } from "react-toastify";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { database } from "@/lib/firebaseConfig";
 
+const validasiInput = (input) => {
+  const polaXSS = /<.*?>/g;
+  return !polaXSS.test(input);
+};
+
 export default function useSuntingAdmin(idAdmin) {
   const [namaDepan, setNamaDepan] = useState("");
   const [namaBelakang, setNamaBelakang] = useState("");
@@ -34,20 +39,31 @@ export default function useSuntingAdmin(idAdmin) {
     }
   };
 
-  const validasiFormulir = () =>
-    !namaDepan
-      ? (toast.error("Masukkan nama depan"), false)
-      : !namaBelakang
-      ? (toast.error("Masukkan nama belakang"), false)
-      : !namaPengguna
-      ? (toast.error("Masukkan nama pengguna"), false)
-      : !email
-      ? (toast.error("Masukkan email"), false)
-      : !jenisKelamin
-      ? (toast.error("Pilih jenis kelamin"), false)
-      : !peranAdmin
-      ? (toast.error("Pilih peran admin"), false)
-      : true;
+  const validasiFormulir = () => {
+    const fields = [
+      { value: namaDepan, label: "Nama Depan" },
+      { value: namaBelakang, label: "Nama Belakang" },
+      { value: namaPengguna, label: "Nama Pengguna" },
+      { value: email, label: "Email" },
+      { value: jenisKelamin, label: "Jenis Kelamin" },
+      { value: peranAdmin, label: "Peran Admin" },
+    ];
+
+    for (const field of fields) {
+      if (!validasiInput(field.value)) {
+        toast.error(
+          `${field.label} tidak boleh mengandung karakter berbahaya!`
+        );
+        return false;
+      }
+      if (!field.value) {
+        toast.error(`Masukkan ${field.label.toLowerCase()}`);
+        return false;
+      }
+    }
+
+    return true;
+  };
 
   const suntingAdmin = async () => {
     setSedangMemuatSuntingAdmin(true);

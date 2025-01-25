@@ -206,6 +206,7 @@ function Konten() {
                         color="green"
                         size="sm"
                         onClick={() => tanganiSunting(admin.id)}
+                        disabled={admin.Peran_Admin !== "Admin"}
                       >
                         Edit
                       </Button>
@@ -214,6 +215,7 @@ function Konten() {
                         size="sm"
                         onClick={() => konfirmasiHapus(admin.id)}
                         className="ml-2"
+                        disabled={admin.Peran_Admin !== "Admin"}
                       >
                         <IoTrashOutline className="w-5 h-5" />
                       </Button>

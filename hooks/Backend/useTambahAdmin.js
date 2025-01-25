@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { collection, doc, setDoc, serverTimestamp } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  setDoc,
+  serverTimestamp,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { toast } from "react-toastify";
 // PERPUSTAKAAN KAMI
@@ -14,38 +22,66 @@ const useTambahAdmin = () => {
   const [peranAdmin, setPeranAdmin] = useState("");
   const [sedangMemuatTambahAdmin, setSedangMemuatTambahAdmin] = useState(false);
 
+  const validasiInput = (input) => {
+    const polaXSS = /<.*?>/g;
+    return !polaXSS.test(input);
+  };
+
   const validasiFormulir = () => {
     let sesuai = true;
     let pesanKesalahan = "";
 
-    !namaDepan
-      ? ((sesuai = false), (pesanKesalahan += "Nama Depan harus diisi. "))
-      : null;
-    !namaBelakang
-      ? ((sesuai = false), (pesanKesalahan += "Nama Belakang harus diisi. "))
-      : null;
-    !namaPengguna
-      ? ((sesuai = false), (pesanKesalahan += "Nama Pengguna harus diisi. "))
-      : null;
-    !email
-      ? ((sesuai = false), (pesanKesalahan += "Email harus diisi. "))
-      : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-      ? ((sesuai = false), (pesanKesalahan += "Format email tidak sesuai. "))
-      : null;
-    if (!jenisKelamin) {
-      sesuai = false;
-      pesanKesalahan += "Jenis Kelamin harus dipilih. ";
-    }
-    if (!peranAdmin) {
-      sesuai = false;
-      pesanKesalahan += "Peran Admin harus dipilih. ";
-    }
+    const validasiHanyaHuruf = (teks, namaField) =>
+      !teks || !/^[a-zA-Z\s]+$/.test(teks)
+        ? (sesuai = false) &&
+          (pesanKesalahan += `Silakan masukkan ${namaField} yang valid (hanya huruf diperbolehkan). `)
+        : null;
 
-    if (!sesuai) {
-      toast.error(pesanKesalahan.trim());
-    }
+    const fields = [
+      { value: namaDepan, label: "Nama Depan" },
+      { value: namaBelakang, label: "Nama Belakang" },
+      { value: namaPengguna, label: "Nama Pengguna" },
+      { value: email, label: "Email" },
+      { value: jenisKelamin, label: "Jenis Kelamin" },
+      { value: peranAdmin, label: "Peran Admin" },
+    ];
+
+    fields.forEach(
+      ({ value, label }) =>
+        !validasiInput(value) &&
+        (sesuai = false) &&
+        (pesanKesalahan += `${label} tidak boleh mengandung karakter berbahaya. `)
+    );
+    validasiHanyaHuruf(namaDepan, "Nama Depan");
+    validasiHanyaHuruf(namaBelakang, "Nama Belakang");
+    validasiHanyaHuruf(namaPengguna, "Nama Pengguna");
+
+    !email
+      ? (sesuai = false) && (pesanKesalahan += "Email harus diisi. ")
+      : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+      ? (sesuai = false) && (pesanKesalahan += "Format email tidak sesuai. ")
+      : null;
+
+    !jenisKelamin
+      ? (sesuai = false) && (pesanKesalahan += "Jenis Kelamin harus dipilih. ")
+      : null;
+    !peranAdmin
+      ? (sesuai = false) && (pesanKesalahan += "Peran Admin harus dipilih. ")
+      : null;
+
+    !sesuai && toast.error(pesanKesalahan.trim());
 
     return sesuai;
+  };
+
+  const periksaSuperAdmin = async () => {
+    const referensiAdmin = collection(database, "admin");
+    const kueri = query(
+      referensiAdmin,
+      where("Peran_Admin", "==", "Super Admin")
+    );
+    const hasilKueri = await getDocs(kueri);
+    return hasilKueri.empty ? false : true;
   };
 
   const tambahAdmin = async () => {
@@ -54,6 +90,14 @@ const useTambahAdmin = () => {
     setSedangMemuatTambahAdmin(true);
 
     try {
+      if (peranAdmin === "Super Admin" && (await periksaSuperAdmin())) {
+        toast.error(
+          "Tidak dapat menambahkan super admin karena super admin sudah ada!"
+        );
+        setSedangMemuatTambahAdmin(false);
+        return;
+      }
+
       const kataSandi = "123456";
       const userCredential = await createUserWithEmailAndPassword(
         auth,
