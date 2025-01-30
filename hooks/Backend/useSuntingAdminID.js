@@ -1,0 +1,73 @@
+import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { database } from "@/lib/firebaseConfig";
+
+export default function useSuntingAdmin(idAdmin) {
+  const [namaDepan, setNamaDepan] = useState("");
+  const [namaBelakang, setNamaBelakang] = useState("");
+  const [namaPengguna, setNamaPengguna] = useState("");
+  const [email, setEmail] = useState("");
+  const [jenisKelamin, setJenisKelamin] = useState("");
+  const [peranAdmin, setPeranAdmin] = useState("");
+  const [sedangMemuatSuntingAdmin, setSedangMemuatSuntingAdmin] =
+    useState(false);
+
+  const suntingAdmin = async () => {
+    setSedangMemuatSuntingAdmin(true);
+    try {
+      const adminRef = doc(database, "admin", idAdmin);
+      await updateDoc(adminRef, {
+        Nama_Depan: namaDepan,
+        Nama_Belakang: namaBelakang,
+        Nama_Pengguna: namaPengguna,
+        Email: email,
+        Jenis_Kelamin: jenisKelamin,
+        Peran_Admin: peranAdmin,
+      });
+      toast.success("Data admin berhasil diperbarui!");
+    } catch (error) {
+      toast.error("Gagal memperbarui data admin: " + error.message);
+    } finally {
+      setSedangMemuatSuntingAdmin(false);
+    }
+  };
+
+  useEffect(() => {
+    const ambilDataAdmin = async () => {
+      const adminRef = doc(database, "admin", idAdmin);
+      const docSnap = await getDoc(adminRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setNamaDepan(data.Nama_Depan || "");
+        setNamaBelakang(data.Nama_Belakang || "");
+        setNamaPengguna(data.Nama_Pengguna || "");
+        setEmail(data.Email || "");
+        setJenisKelamin(data.Jenis_Kelamin || "");
+        setPeranAdmin(data.Peran_Admin || "");
+      } else {
+        toast.error("Data admin tidak ditemukan!");
+      }
+    };
+    if (idAdmin) {
+      ambilDataAdmin();
+    }
+  }, [idAdmin]);
+
+  return {
+    namaDepan,
+    namaBelakang,
+    namaPengguna,
+    email,
+    jenisKelamin,
+    peranAdmin,
+    setNamaDepan,
+    setNamaBelakang,
+    setNamaPengguna,
+    setEmail,
+    setJenisKelamin,
+    setPeranAdmin,
+    sedangMemuatSuntingAdmin,
+    suntingAdmin,
+  };
+}

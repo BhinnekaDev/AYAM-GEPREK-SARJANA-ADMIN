@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
@@ -12,6 +12,7 @@ import {
 import Image from "next/image";
 
 // HOOKS
+import useSuntingAdmin from "@/hooks/Backend/useSuntingAdmin";
 import useTampilkanAdminSesuaiID from "@/hooks/Backend/useTampilkanAdminSesuaiID";
 import useHapusAdminID from "@/hooks/Backend/useHapusAdminID";
 
@@ -28,16 +29,61 @@ function Konten() {
   const [adminYangTerpilih, setAdminYangTerpilih] = useState(null);
 
   const { sedangMemuatHapusAdmin, hapusAdmin } = useHapusAdminID();
-
   const { adminData, memuatTampilkanAdminSesuaiID } =
     useTampilkanAdminSesuaiID();
 
+  // Menggunakan hook untuk mengedit admin
+  const {
+    namaDepan,
+    namaBelakang,
+    namaPengguna,
+    email,
+    jenisKelamin,
+    peranAdmin,
+    setNamaDepan,
+    setNamaBelakang,
+    setNamaPengguna,
+    setEmail,
+    setJenisKelamin,
+    setPeranAdmin,
+    sedangMemuatSuntingAdmin,
+    suntingAdmin,
+  } = useSuntingAdmin(adminData?.id);
+
   const tanganiInput = (e) => {
     const { name, value } = e.target;
-    setAdminData({ ...adminData, [name]: value });
+    // Set state adminData berdasarkan input
+    switch (name) {
+      case "NamaDepan":
+        setNamaDepan(value);
+        break;
+      case "NamaBelakang":
+        setNamaBelakang(value);
+        break;
+      case "Email":
+        setEmail(value);
+        break;
+      case "NamaPengguna":
+        setNamaPengguna(value);
+        break;
+      case "JenisKelamin":
+        setJenisKelamin(value);
+        break;
+      case "Peran":
+        setPeranAdmin(value);
+        break;
+      default:
+        break;
+    }
   };
 
-  const toggleEdit = () => setIsEditable(!isEditable);
+  const toggleEdit = () => {
+    if (isEditable) {
+      // Simpan perubahan saat edit
+      suntingAdmin();
+    }
+    setIsEditable(!isEditable);
+  };
 
   const konfirmasiHapus = (idAdmin) => {
     setAdminYangTerpilih(idAdmin);
@@ -45,7 +91,6 @@ function Konten() {
   };
 
   const hapus = async (id) => {
-    console.log(id);
     if (id) {
       await hapusAdmin(id);
       setBukaModalHapusAdmin(false);
@@ -70,11 +115,9 @@ function Konten() {
           </div>
           <div>
             <Typography variant="h5" className="font-bold text-gray-900">
-              {adminData?.Nama_Depan} {adminData?.Nama_Belakang}
+              {namaDepan} {namaBelakang}
             </Typography>
-            <Typography className="text-sm text-gray-500">
-              {adminData?.Email}
-            </Typography>
+            <Typography className="text-sm text-gray-500">{email}</Typography>
           </div>
         </div>
 
@@ -83,51 +126,45 @@ function Konten() {
             {
               label: "Nama Depan",
               name: "NamaDepan",
-              value: adminData?.id,
+              value: namaDepan,
             },
             {
               label: "Nama Belakang",
               name: "NamaBelakang",
-              value: adminData?.Nama_Belakang,
+              value: namaBelakang,
             },
             {
               label: "Email",
               name: "Email",
-              value: adminData?.Email,
+              value: email,
             },
             {
               label: "Jenis Kelamin",
               name: "JenisKelamin",
-              value: adminData?.Jenis_Kelamin,
+              value: jenisKelamin,
               component: isEditable ? (
                 <Select
                   name="JenisKelamin"
-                  value={adminData?.Jenis_Kelamin}
-                  onChange={(e) =>
-                    setAdminData({ ...adminData, Jenis_Kelamin: e })
-                  }
+                  value={jenisKelamin}
+                  onChange={(e) => setJenisKelamin(e)}
                   className="mt-1"
                 >
                   <Option value="Pria">Pria</Option>
                   <Option value="Wanita">Wanita</Option>
                 </Select>
               ) : (
-                <Input
-                  value={adminData?.Jenis_Kelamin}
-                  disabled
-                  className="mt-1"
-                />
+                <Input value={jenisKelamin} disabled className="mt-1" />
               ),
             },
             {
               label: "Nama Pengguna",
               name: "NamaPengguna",
-              value: adminData?.Nama_Pengguna,
+              value: namaPengguna,
             },
             {
               label: "Peran",
               name: "Peran",
-              value: adminData?.Peran_Admin,
+              value: peranAdmin,
             },
           ].map((field, index) => (
             <div key={index}>
@@ -164,7 +201,7 @@ function Konten() {
       <ModalKonfirmasiHapusAdminID
         terbuka={bukaModalHapusAdmin}
         tertutup={setBukaModalHapusAdmin}
-        adminYangTerpilih={`${adminData?.Nama_Depan} ${adminData?.Nama_Belakang}`}
+        adminYangTerpilih={`${namaDepan} ${namaBelakang}`}
         konfirmasiHapusAdmin={hapus}
         sedangMemuatHapusAdmin={sedangMemuatHapusAdmin}
         adminId={adminYangTerpilih}
