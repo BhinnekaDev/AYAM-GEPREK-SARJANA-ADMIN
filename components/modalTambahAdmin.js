@@ -57,7 +57,10 @@ const ModalTambahAdmin = ({ terbuka, tertutup }) => {
         <IconButton
           variant="text"
           color="gray"
-          onClick={tertutup}
+          onClick={(e) => {
+            e.stopPropagation();
+            tertutup();
+          }}
           className="text-gray-800 hover:bg-transparent"
         >
           <XMarkIcon className="h-6 w-6" />
