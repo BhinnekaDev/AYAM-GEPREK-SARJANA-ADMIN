@@ -113,14 +113,6 @@ const ModalEditMinuman = ({ terbuka, tertutup, minumanYangTerpilih }) => {
       </DialogBody>
       <DialogFooter className="flex justify-center gap-4">
         <Button
-          variant="text"
-          color="gray"
-          onClick={() => tertutup(false)}
-          className="px-6 py-2 rounded-lg"
-        >
-          Batal
-        </Button>
-        <Button
           disabled={sedangMemuatSuntingMinuman}
           color="blue"
           onClick={async () => {
