@@ -21,9 +21,10 @@ const ModalEditMakanan = ({ terbuka, tertutup, makananYangTerpilih }) => {
   const {
     namaMakanan,
     kategoriMakanan,
-    suntingMakanan,
     hargaMakanan,
     deskripsiMakanan,
+    gambarMakanan,
+    suntingMakanan,
     setNamaMakanan,
     setKategoriMakanan,
     setHargaMakanan,
@@ -99,13 +100,27 @@ const ModalEditMakanan = ({ terbuka, tertutup, makananYangTerpilih }) => {
               onChange={handlePerubahanFile}
             />
           </label>
-          <Image
-            src={fotoMakanan}
-            alt="Gambar Makanan"
-            width={120}
-            height={120}
-            className="rounded-md object-cover"
-          />
+          {gambarMakanan ? (
+            <Image
+              src={
+                typeof gambarMakanan === "string"
+                  ? gambarMakanan
+                  : URL.createObjectURL(gambarMakanan)
+              }
+              alt="Gambar Makanan"
+              width={120}
+              height={120}
+              className="rounded-md object-cover"
+            />
+          ) : (
+            <Image
+              src={fotoMakanan}
+              alt="Gambar Default"
+              width={120}
+              height={120}
+              className="rounded-md object-cover"
+            />
+          )}
         </div>
         <Textarea
           label="Deskripsi"

@@ -56,11 +56,9 @@ const Konten = () => {
   const hapus = async () => {
     if (minumanYangTerpilih) {
       await hapusMinuman(minumanYangTerpilih);
-      // Menghapus minuman dari state daftarMinuman setelah berhasil dihapus
       const updatedMinuman = daftarMinuman.filter(
         (minuman) => minuman.id !== minumanYangTerpilih
       );
-      // Pastikan untuk mengupdate state `daftarMinuman`
       setBukaModalHapusMinuman(false);
       setMinumanYangTerpilih(null);
     }
@@ -95,8 +93,8 @@ const Konten = () => {
           className="w-full px-3 py-2 border border-gray-300 rounded-lg text-blue-gray-900 text-sm "
         >
           <option value="Semua Kategori">Semua Kategori</option>
-          <option value="Minuman Coffe">Minuman Coffe</option>
-          <option value="Minuman Non Coffe">Minuman Non Coffe</option>
+          <option value="Minuman Coffee">Minuman Coffee</option>
+          <option value="Minuman Non Coffee">Minuman Non Coffee</option>
         </select>
       </Card>
       <Card className="p-6 bg-white rounded-lg shadow-lg">

@@ -16,12 +16,7 @@ const Page = () => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
-        toast.error(
-          "Upsss, Login dulu lah bray masa langsung maksa masuk aja 🤬😡😠!"
-        );
-        setTimeout(() => {
-          pengarah.push("/");
-        }, 2000);
+        pengarah.push("/?redirect=true");
       }
     });
 

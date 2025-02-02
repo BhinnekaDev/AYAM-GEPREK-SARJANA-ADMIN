@@ -10,8 +10,8 @@ import {
   Button,
 } from "@material-tailwind/react";
 import { FaFileUpload } from "react-icons/fa";
-import useTambahMinuman from "@/hooks/Backend/useTambahMinuman"; // Pastikan ini adalah hook yang benar
-import Memuat from "@/components/memuat"; // Komponen loading jika diperlukan
+import useTambahMinuman from "@/hooks/Backend/useTambahMinuman";
+import Memuat from "@/components/memuat";
 
 const ModalTambahMenuMinuman = ({ terbuka, ubahStatusModal }) => {
   const {
@@ -26,8 +26,8 @@ const ModalTambahMenuMinuman = ({ terbuka, ubahStatusModal }) => {
     gambarMinuman,
     setGambarMinuman,
     sedangMemuatTambahMinuman,
-    tambahMinuman, // Pastikan ini adalah fungsi untuk menambah minumank
-  } = useTambahMinuman(); // Menggunakan hook untuk pengelolaan minumank
+    tambahMinuman,
+  } = useTambahMinuman();
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];

@@ -24,6 +24,7 @@ const ModalEditMinuman = ({ terbuka, tertutup, minumanYangTerpilih }) => {
     suntingMinuman,
     hargaMinuman,
     deskripsiMinuman,
+    gambarMinuman,
     setNamaMinuman,
     setKategoriMinuman,
     setHargaMinuman,
@@ -87,7 +88,7 @@ const ModalEditMinuman = ({ terbuka, tertutup, minumanYangTerpilih }) => {
             className="flex items-center justify-between w-full px-4 py-2 border rounded-md cursor-pointer hover:border-blue-500"
           >
             <FaFileUpload className="text-blue-500" size={20} />
-            <span className="text-gray-700 text-sm">Unggah Foto Minuman</span>
+            <span className="text-gray-700 text-sm">Unggah Foto Makanan</span>
             <input
               id="upload-image"
               type="file"
@@ -96,13 +97,27 @@ const ModalEditMinuman = ({ terbuka, tertutup, minumanYangTerpilih }) => {
               onChange={handlePerubahanFile}
             />
           </label>
-          <Image
-            src={fotoMinuman}
-            alt="Gambar Minuman"
-            width={120}
-            height={120}
-            className="rounded-md object-cover"
-          />
+          {gambarMinuman ? (
+            <Image
+              src={
+                typeof gambarMinuman === "string"
+                  ? gambarMinuman
+                  : URL.createObjectURL(gambarMinuman)
+              }
+              alt="Gambar Minuman"
+              width={120}
+              height={120}
+              className="rounded-md object-cover"
+            />
+          ) : (
+            <Image
+              src={fotoMinuman}
+              alt="Gambar Default"
+              width={120}
+              height={120}
+              className="rounded-md object-cover"
+            />
+          )}
         </div>
         <Textarea
           label="Deskripsi"

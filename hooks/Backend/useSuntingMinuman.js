@@ -47,16 +47,24 @@ export default function useSuntingMinuman(idMinuman) {
     }
   };
 
-  const validasiFormulir = () =>
-    !namaMinuman
-      ? (toast.error("Masukkan nama minuman"), false)
+  const validasiFormulir = () => {
+    const regexNamaDeskripsi = /^[a-zA-Z\s]+$/;
+    const regexHarga = /^[0-9]+(\.[0-9]{1,2})?$/;
+
+    return !namaMinuman || !regexNamaDeskripsi.test(namaMinuman)
+      ? (toast.error("Nama minuman hanya boleh mengandung huruf dan spasi!"),
+        false)
       : !kategoriMinuman
-      ? (toast.error("Pilih kategori minuman"), false)
-      : !hargaMinuman
-      ? (toast.error("Masukkan harga minuman"), false)
-      : !deskripsiMinuman
-      ? (toast.error("Masukkan deskripsi minuman"), false)
+      ? (toast.error("Pilih kategori minuman!"), false)
+      : !hargaMinuman || !regexHarga.test(hargaMinuman)
+      ? (toast.error("Harga minuman harus berupa angka positif!"), false)
+      : !deskripsiMinuman || !regexNamaDeskripsi.test(deskripsiMinuman)
+      ? (toast.error(
+          "Deskripsi minuman hanya boleh mengandung huruf dan spasi!"
+        ),
+        false)
       : true;
+  };
 
   const suntingMinuman = async () => {
     setSedangMemuatSuntingMinuman(true);
@@ -77,7 +85,9 @@ export default function useSuntingMinuman(idMinuman) {
         }
 
         const storage = getStorage();
-        const gambarRef = ref(storage, `Minuman/${gambarMinuman.name}`);
+        const sanitizedNama = namaMinuman.replace(/[^a-zA-Z0-9]/g, "_");
+        const gambarRef = ref(storage, `Minuman/${sanitizedNama}.jpg`);
+
         await uploadBytes(gambarRef, gambarMinuman);
         gambarUrl = await getDownloadURL(gambarRef);
       }
@@ -90,6 +100,7 @@ export default function useSuntingMinuman(idMinuman) {
         Deskripsi_Minuman: deskripsiMinuman,
         Gambar_Minuman: gambarUrl,
       });
+
       toast.success("Data minuman diperbarui!");
     } catch (error) {
       toast.error("Gagal menyunting data minuman: " + error.message);
@@ -99,9 +110,7 @@ export default function useSuntingMinuman(idMinuman) {
   };
 
   useEffect(() => {
-    if (idMinuman) {
-      ambilDataMinuman();
-    }
+    if (idMinuman) ambilDataMinuman();
   }, [idMinuman]);
 
   return {

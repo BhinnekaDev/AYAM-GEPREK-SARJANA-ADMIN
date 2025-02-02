@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Typography,
   Button,
@@ -10,39 +10,40 @@ import {
 } from "@material-tailwind/react";
 import Image from "next/image";
 import { IoTrashOutline } from "react-icons/io5";
+import { toast } from "react-toastify";
 
-// Dummy Data Pengguna
-const daftarPengguna = [
-  {
-    id: 1,
-    Nama_Lengkap: "Sandrong",
-    Email: "john.doe@example.com",
-    No_HP: "1234567890",
-    Alamat: "Cibabat selatan",
-    Tanggal_Pembuatan_Akun: new Date(),
-  },
-  {
-    id: 2,
-    Nama_Lengkap: "Hengki",
-    Email: "jane.smith@example.com",
-    No_HP: "0987654321",
-    Alamat: "Parongpong Lembang",
-    Tanggal_Pembuatan_Akun: new Date(),
-  },
-];
+// HOOKS
+import useTampilkanPengguna from "@/hooks/Backend/useTampilkanPengguna";
+import useHapusPengguna from "@/hooks/Backend/useHapusPengguna";
+//COMPONENTS
+import ModalKonfirmasiHapusPengguna from "@/components/modalKonfirmasiHapusPengguna";
 
 function Konten() {
-  const [halaman, setHalaman] = useState(1);
-  const totalPengguna = daftarPengguna.length;
+  const {
+    halaman,
+    totalPengguna,
+    daftarPengguna,
+    ambilHalamanSebelumnya,
+    ambilHalamanSelanjutnya,
+    sedangMemuatPengguna,
+  } = useTampilkanPengguna();
 
-  const fotoProfil = require("@/assets/images/profil.jpg");
+  const fotoProfilDefault = require("@/assets/images/profil.jpg");
+  const [bukaModalHapusPengguna, setBukaModalHapusPengguna] = useState(false);
+  const [penggunaYangTerpilih, setPenggunaYangTerpilih] = useState(null);
+  const { hapusPengguna, sedangMemuatHapusPengguna } = useHapusPengguna();
 
-  const ambilHalamanSebelumnya = () => {
-    if (halaman > 1) setHalaman(halaman - 1);
+  const konfirmasiHapusPengguna = (idPengguna) => {
+    setPenggunaYangTerpilih(idPengguna);
+    setBukaModalHapusPengguna(true);
   };
 
-  const ambilHalamanSelanjutnya = () => {
-    if (halaman < Math.ceil(totalPengguna / 5)) setHalaman(halaman + 1);
+  const hapus = async () => {
+    if (penggunaYangTerpilih) {
+      await hapusPengguna(penggunaYangTerpilih);
+      setBukaModalHapusPengguna(false);
+      setPenggunaYangTerpilih(null);
+    }
   };
 
   return (
@@ -69,49 +70,61 @@ function Konten() {
           className="overflow-y-auto"
           style={{ maxHeight: "calc(100vh - 200px)" }}
         >
-          <table className="w-full min-w-max table-auto text-left">
-            <thead>
-              <tr>
-                <th className="border-y py-3 px-4">Nama Lengkap</th>
-                <th className="border-y py-2 px-4 text-center">Email</th>
-                <th className="border-y py-2 px-4 text-center">No HP</th>
-                <th className="border-y py-2 px-4 text-center">Alamat</th>
-                <th className="border-y text-center">Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {daftarPengguna.map((pengguna) => (
-                <tr key={pengguna.id} className="border-b">
-                  <td className="p-5 flex items-center gap-3">
-                    <Image
-                      src={fotoProfil}
-                      alt={pengguna.Nama_Lengkap}
-                      width={40}
-                      height={40}
-                      className="rounded-full"
-                    />
-                    <div>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-medium"
-                      >
-                        {pengguna.Nama_Lengkap}
-                      </Typography>
-                    </div>
-                  </td>
-                  <td className="text-center">{pengguna.Email}</td>
-                  <td className="text-center">{pengguna.No_HP}</td>
-                  <td className="text-center">{pengguna.Alamat}</td>
-                  <td className="flex justify-center">
-                    <Button color="red" size="sm" className="ml-2">
-                      <IoTrashOutline className="w-5 h-5" />
-                    </Button>
-                  </td>
+          {sedangMemuatPengguna ? (
+            <div className="flex justify-center items-center">
+              <Typography>Memuat data pengguna...</Typography>
+            </div>
+          ) : (
+            <table className="w-full min-w-max table-auto text-left">
+              <thead>
+                <tr>
+                  <th className="border-y py-3 px-4">Nama Lengkap</th>
+                  <th className="border-y py-2 px-4 text-center">Email</th>
+                  <th className="border-y py-2 px-4 text-center">No HP</th>
+                  <th className="border-y py-2 px-4 text-center">Alamat</th>
+                  <th className="border-y text-center">Aksi</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {daftarPengguna.map((pengguna) => (
+                  <tr key={pengguna.id} className="border-b">
+                    <td className="p-5 flex items-center gap-3">
+                      <Image
+                        src={pengguna.profileImage || fotoProfilDefault}
+                        alt={pengguna.Nama_Lengkap || "Gambar Profil Pengguna"}
+                        width={40}
+                        height={40}
+                        className="rounded-full"
+                      />
+
+                      <div>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-medium"
+                        >
+                          {pengguna.Nama_Lengkap}
+                        </Typography>
+                      </div>
+                    </td>
+                    <td className="text-center">{pengguna.Email}</td>
+                    <td className="text-center">{pengguna.No_HP}</td>
+                    <td className="text-center">{pengguna.Alamat}</td>
+                    <td className="flex justify-center">
+                      <Button
+                        color="red"
+                        size="sm"
+                        className="ml-2"
+                        onClick={() => konfirmasiHapusPengguna(pengguna.id)}
+                      >
+                        <IoTrashOutline className="w-5 h-5" />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </CardBody>
 
         <CardFooter className="flex items-center justify-between border-t p-4">
@@ -138,6 +151,14 @@ function Konten() {
           </div>
         </CardFooter>
       </Card>
+
+      <ModalKonfirmasiHapusPengguna
+        terbuka={bukaModalHapusPengguna}
+        tertutup={setBukaModalHapusPengguna}
+        penggunaYangTerpilih={penggunaYangTerpilih}
+        konfirmasiHapusPengguna={hapus}
+        sedangMemuatHapus={sedangMemuatHapusPengguna}
+      />
     </div>
   );
 }

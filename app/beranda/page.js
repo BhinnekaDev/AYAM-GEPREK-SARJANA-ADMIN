@@ -11,18 +11,12 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const Beranda = () => {
   const pengarah = useRouter();
-  const [tahunDipilih, setTahunDipilih] = useState("Pilih Tahun");
 
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
-        toast.error(
-          "Upsss, Login dulu lah bray masa langsung maksa masuk aja 🤬😡😠!"
-        );
-        setTimeout(() => {
-          pengarah.push("/");
-        }, 2000);
+        pengarah.push("/?redirect=true");
       }
     });
 
@@ -34,7 +28,7 @@ const Beranda = () => {
       <ToastContainer />
       <Sidebar pengarah={pengarah} />
       <div className="flex flex-col flex-1 gap-4 mx-3">
-        <Konten tahunDipilih={tahunDipilih} />
+        <Konten />
       </div>
     </section>
   );
