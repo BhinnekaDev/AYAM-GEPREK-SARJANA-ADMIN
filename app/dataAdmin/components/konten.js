@@ -172,7 +172,7 @@ function Konten() {
                     <td className="text-center">
                       <span
                         className={(() => {
-                          const adminIdInStorage = localStorage.getItem(
+                          const adminIdInStorage = sessionStorage.getItem(
                             admin.id
                           );
                           if (adminIdInStorage) {
@@ -183,7 +183,7 @@ function Konten() {
                         })()}
                       >
                         {(() => {
-                          const adminIdInStorage = localStorage.getItem(
+                          const adminIdInStorage = sessionStorage.getItem(
                             admin.id
                           );
                           return adminIdInStorage ? "Aktif" : "Tidak Aktif";

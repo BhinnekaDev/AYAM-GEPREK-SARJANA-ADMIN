@@ -91,7 +91,11 @@ function Konten() {
                     <td className="p-5 flex items-center gap-3">
                       <Image
                         src={pengguna.profileImage || fotoProfilDefault}
-                        alt={pengguna.Nama_Lengkap || "Gambar Profil Pengguna"}
+                        alt={
+                          pengguna.Nama_Lengkap ||
+                          `${pengguna.Nama_Depan} ${pengguna.Nama_Belakang}` ||
+                          "Gambar Profil Pengguna"
+                        }
                         width={40}
                         height={40}
                         className="rounded-full"
@@ -103,12 +107,13 @@ function Konten() {
                           color="blue-gray"
                           className="font-medium"
                         >
-                          {pengguna.Nama_Lengkap}
+                          {pengguna.Nama_Lengkap ||
+                            `${pengguna.Nama_Depan} ${pengguna.Nama_Belakang}`}
                         </Typography>
                       </div>
                     </td>
                     <td className="text-center">{pengguna.Email}</td>
-                    <td className="text-center">{pengguna.No_HP}</td>
+                    <td className="text-center">{pengguna.No_Telepon}</td>
                     <td className="text-center">{pengguna.Alamat}</td>
                     <td className="flex justify-center">
                       <Button

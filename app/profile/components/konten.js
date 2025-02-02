@@ -32,7 +32,6 @@ function Konten() {
   const { adminData, memuatTampilkanAdminSesuaiID } =
     useTampilkanAdminSesuaiID();
 
-  // Menggunakan hook untuk mengedit admin
   const {
     namaDepan,
     namaBelakang,
@@ -52,7 +51,6 @@ function Konten() {
 
   const tanganiInput = (e) => {
     const { name, value } = e.target;
-    // Set state adminData berdasarkan input
     switch (name) {
       case "NamaDepan":
         setNamaDepan(value);
@@ -79,7 +77,6 @@ function Konten() {
 
   const toggleEdit = () => {
     if (isEditable) {
-      // Simpan perubahan saat edit
       suntingAdmin();
     }
     setIsEditable(!isEditable);
@@ -165,6 +162,19 @@ function Konten() {
               label: "Peran",
               name: "Peran",
               value: peranAdmin,
+              component: isEditable ? (
+                <Select
+                  name="Peran"
+                  value={peranAdmin}
+                  onChange={(e) => setPeranAdmin(e)}
+                  className="mt-1"
+                >
+                  <Option value="Admin">Admin</Option>
+                  <Option value="Super Admin">Super Admin</Option>
+                </Select>
+              ) : (
+                <Input value={peranAdmin} disabled className="mt-1" />
+              ),
             },
           ].map((field, index) => (
             <div key={index}>

@@ -3,6 +3,11 @@ import { toast } from "react-toastify";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { database } from "@/lib/firebaseConfig";
 
+const validasiInput = (input) => {
+  const polaXSS = /<.*?>/g;
+  return !polaXSS.test(input);
+};
+
 export default function useSuntingAdmin(idAdmin) {
   const [namaDepan, setNamaDepan] = useState("");
   const [namaBelakang, setNamaBelakang] = useState("");
@@ -13,8 +18,39 @@ export default function useSuntingAdmin(idAdmin) {
   const [sedangMemuatSuntingAdmin, setSedangMemuatSuntingAdmin] =
     useState(false);
 
+  const validasiFormulir = () => {
+    const fields = [
+      { value: namaDepan, label: "Nama Depan" },
+      { value: namaBelakang, label: "Nama Belakang" },
+      { value: namaPengguna, label: "Nama Pengguna" },
+      { value: email, label: "Email" },
+      { value: jenisKelamin, label: "Jenis Kelamin" },
+      { value: peranAdmin, label: "Peran Admin" },
+    ];
+
+    for (const field of fields) {
+      if (!validasiInput(field.value)) {
+        toast.error(
+          `${field.label} tidak boleh mengandung karakter berbahaya!`
+        );
+        return false;
+      }
+      if (!field.value) {
+        toast.error(`Masukkan ${field.label.toLowerCase()}`);
+        return false;
+      }
+    }
+    return true;
+  };
+
   const suntingAdmin = async () => {
     setSedangMemuatSuntingAdmin(true);
+
+    if (!validasiFormulir()) {
+      setSedangMemuatSuntingAdmin(false);
+      return;
+    }
+
     try {
       const adminRef = doc(database, "admin", idAdmin);
       await updateDoc(adminRef, {

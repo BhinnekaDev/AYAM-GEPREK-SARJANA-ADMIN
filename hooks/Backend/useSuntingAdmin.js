@@ -1,6 +1,14 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { doc, updateDoc, getDoc } from "firebase/firestore";
+import {
+  doc,
+  updateDoc,
+  getDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import { database } from "@/lib/firebaseConfig";
 
 const validasiInput = (input) => {
@@ -39,6 +47,15 @@ export default function useSuntingAdmin(idAdmin) {
     }
   };
 
+  const periksaSuperAdmin = async () => {
+    const referensiAdmin = query(
+      collection(database, "admin"),
+      where("Peran_Admin", "==", "Super Admin")
+    );
+    const hasilKueri = await getDocs(referensiAdmin);
+    return hasilKueri.empty ? false : true;
+  };
+
   const validasiFormulir = () => {
     const fields = [
       { value: namaDepan, label: "Nama Depan" },
@@ -74,6 +91,14 @@ export default function useSuntingAdmin(idAdmin) {
     }
 
     try {
+      if (peranAdmin === "Super Admin" && (await periksaSuperAdmin())) {
+        toast.error(
+          "Tidak dapat mengubah admin ini menjadi Super Admin karena Super Admin sudah ada!"
+        );
+        setSedangMemuatSuntingAdmin(false);
+        return;
+      }
+
       const adminRef = doc(database, "admin", idAdmin);
       await updateDoc(adminRef, {
         Nama_Depan: namaDepan,

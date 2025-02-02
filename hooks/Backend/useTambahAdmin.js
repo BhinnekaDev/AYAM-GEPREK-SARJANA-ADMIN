@@ -31,11 +31,32 @@ const useTambahAdmin = () => {
     let sesuai = true;
     let pesanKesalahan = "";
 
-    const validasiHanyaHuruf = (teks, namaField) =>
-      !teks || !/^[a-zA-Z\s]+$/.test(teks)
-        ? (sesuai = false) &&
-          (pesanKesalahan += `Silakan masukkan ${namaField} yang valid (hanya huruf diperbolehkan). `)
-        : null;
+    const validasiXSS = (teks, namaField) => {
+      const polaXSS = /<.*?>/g;
+      if (polaXSS.test(teks)) {
+        sesuai = false;
+        pesanKesalahan += `${namaField} mengandung karakter berbahaya atau tag HTML. `;
+      }
+    };
+
+    const validasiHanyaHuruf = (teks, namaField) => {
+      const pola = /^[a-zA-Z\s]+$/;
+      if (!teks || !pola.test(teks)) {
+        sesuai = false;
+        pesanKesalahan += `Silakan masukkan ${namaField} yang valid (hanya huruf dan spasi diperbolehkan). `;
+      }
+    };
+
+    const validasiEmail = (email) => {
+      const polaEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!email) {
+        sesuai = false;
+        pesanKesalahan += "Email harus diisi. ";
+      } else if (!polaEmail.test(email)) {
+        sesuai = false;
+        pesanKesalahan += "Format email tidak sesuai. ";
+      }
+    };
 
     const fields = [
       { value: namaDepan, label: "Nama Depan" },
@@ -46,30 +67,33 @@ const useTambahAdmin = () => {
       { value: peranAdmin, label: "Peran Admin" },
     ];
 
-    fields.forEach(
-      ({ value, label }) =>
-        !validasiInput(value) &&
-        (sesuai = false) &&
-        (pesanKesalahan += `${label} tidak boleh mengandung karakter berbahaya. `)
-    );
+    fields.forEach(({ value, label }) => {
+      validasiXSS(value, label);
+      if (!validasiInput(value)) {
+        sesuai = false;
+        pesanKesalahan += `${label} tidak boleh mengandung karakter berbahaya. `;
+      }
+    });
+
     validasiHanyaHuruf(namaDepan, "Nama Depan");
     validasiHanyaHuruf(namaBelakang, "Nama Belakang");
     validasiHanyaHuruf(namaPengguna, "Nama Pengguna");
 
-    !email
-      ? (sesuai = false) && (pesanKesalahan += "Email harus diisi. ")
-      : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-      ? (sesuai = false) && (pesanKesalahan += "Format email tidak sesuai. ")
-      : null;
+    validasiEmail(email);
 
-    !jenisKelamin
-      ? (sesuai = false) && (pesanKesalahan += "Jenis Kelamin harus dipilih. ")
-      : null;
-    !peranAdmin
-      ? (sesuai = false) && (pesanKesalahan += "Peran Admin harus dipilih. ")
-      : null;
+    if (!jenisKelamin) {
+      sesuai = false;
+      pesanKesalahan += "Jenis Kelamin harus dipilih. ";
+    }
 
-    !sesuai && toast.error(pesanKesalahan.trim());
+    if (!peranAdmin) {
+      sesuai = false;
+      pesanKesalahan += "Peran Admin harus dipilih. ";
+    }
+
+    if (!sesuai) {
+      toast.error(pesanKesalahan.trim());
+    }
 
     return sesuai;
   };

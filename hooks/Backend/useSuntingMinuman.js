@@ -20,13 +20,6 @@ export default function useSuntingMinuman(idMinuman) {
     useState(false);
   const [gambarLama, setGambarLama] = useState("");
 
-  const validasiGambar = (file) => {
-    if (!file) return true;
-    const formatDiperbolehkan = ["image/png", "image/jpeg", "image/jpg"];
-    const ukuranMaks = 2 * 1024 * 1024; // 2MB
-    return formatDiperbolehkan.includes(file.type) && file.size <= ukuranMaks;
-  };
-
   const ambilDataMinuman = async () => {
     if (!idMinuman) {
       toast.error("ID minuman tidak valid!");
@@ -69,9 +62,6 @@ export default function useSuntingMinuman(idMinuman) {
       ? (toast.error(
           "Deskripsi minuman hanya boleh mengandung huruf dan spasi!"
         ),
-        false)
-      : gambarMinuman instanceof File && !validasiGambar(gambarMinuman)
-      ? (toast.error("Format gambar tidak valid atau ukuran melebihi 2MB!"),
         false)
       : true;
   };

@@ -7,6 +7,12 @@ const useKeluarAkun = () => {
   const tanganiKeluarAkun = useCallback(async () => {
     try {
       await signOut(auth);
+      sessionStorage.removeItem("ID_Admin");
+      const adminId = sessionStorage.getItem("ID_Admin");
+      if (adminId) {
+        sessionStorage.removeItem(adminId);
+      }
+
       toast.success("Anda telah berhasil keluar.", { autoClose: 3000 });
 
       setTimeout(() => {
