@@ -14,8 +14,13 @@ const useTambahMakanan = () => {
     useState(false);
 
   const sanitizeInput = (input) => input.replace(/[^a-zA-Z\s]/g, "").trim();
-
   const validateHarga = (harga) => /^[0-9]*\.?[0-9]+$/.test(harga);
+  const validateGambar = (file) => {
+    if (!file) return true;
+    const allowedFormats = ["image/png", "image/jpeg", "image/jpg"];
+    const maxSize = 2 * 1024 * 1024;
+    return allowedFormats.includes(file.type) && file.size <= maxSize;
+  };
 
   const resetForm = () => {
     setNamaMakanan("");
@@ -26,31 +31,36 @@ const useTambahMakanan = () => {
   };
 
   const tambahMakanan = async () => {
-    !namaMakanan || !kategoriMakanan || !hargaMakanan || !deskripsiMakanan
-      ? toast.error("Semua field wajib diisi!")
-      : null;
+    if (
+      !namaMakanan ||
+      !kategoriMakanan ||
+      !hargaMakanan ||
+      !deskripsiMakanan
+    ) {
+      toast.error("Semua field wajib diisi!");
+      return;
+    }
 
     const sanitizedNamaMakanan = sanitizeInput(namaMakanan);
     const sanitizedDeskripsiMakanan = sanitizeInput(deskripsiMakanan);
 
     !sanitizedNamaMakanan || !sanitizedDeskripsiMakanan
       ? toast.error("Nama dan deskripsi makanan hanya boleh mengandung huruf!")
-      : null;
-
-    !validateHarga(hargaMakanan)
+      : !validateHarga(hargaMakanan)
       ? toast.error(
           "Harga makanan hanya boleh berupa angka tanpa tanda + atau -!"
+        )
+      : !validateGambar(gambarMakanan)
+      ? toast.error(
+          "Format gambar tidak valid atau ukuran melebihi 2MB! Hanya diperbolehkan PNG, JPG, dan JPEG."
         )
       : null;
 
     if (
-      !namaMakanan ||
-      !kategoriMakanan ||
-      !hargaMakanan ||
-      !deskripsiMakanan ||
       !sanitizedNamaMakanan ||
       !sanitizedDeskripsiMakanan ||
-      !validateHarga(hargaMakanan)
+      !validateHarga(hargaMakanan) ||
+      !validateGambar(gambarMakanan)
     ) {
       return;
     }
@@ -65,9 +75,12 @@ const useTambahMakanan = () => {
               "_"
             )}.jpg`;
             const gambarRef = ref(storage, `Makanan/${sanitizedFileName}`);
-            return uploadBytes(gambarRef, gambarMakanan).then(() =>
-              getDownloadURL(gambarRef)
-            );
+            return uploadBytes(gambarRef, gambarMakanan)
+              .then(() => getDownloadURL(gambarRef))
+              .catch(() => {
+                toast.error("Gagal mengunggah gambar. Silakan coba lagi.");
+                throw new Error("Upload gagal");
+              });
           })()
         : "";
 

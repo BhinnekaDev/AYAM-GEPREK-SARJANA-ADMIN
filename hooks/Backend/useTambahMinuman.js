@@ -13,23 +13,45 @@ const useTambahMinuman = () => {
   const [sedangMemuatTambahMinuman, setSedangMemuatTambahMinuman] =
     useState(false);
 
+  const validasiGambar = (file) => {
+    if (!file) return true;
+    const formatDiperbolehkan = ["image/png", "image/jpeg", "image/jpg"];
+    const ukuranMaks = 2 * 1024 * 1024;
+    return formatDiperbolehkan.includes(file.type) && file.size <= ukuranMaks;
+  };
+
+  const validasiFormulir = () => {
+    const regexNamaDeskripsi = /^[a-zA-Z\s]+$/;
+    const regexHarga = /^[0-9]+(\.[0-9]{1,2})?$/;
+
+    return !namaMinuman || !regexNamaDeskripsi.test(namaMinuman)
+      ? (toast.error("Nama minuman hanya boleh mengandung huruf dan spasi!"),
+        false)
+      : !kategoriMinuman
+      ? (toast.error("Pilih kategori minuman!"), false)
+      : !hargaMinuman || !regexHarga.test(hargaMinuman)
+      ? (toast.error("Harga minuman harus berupa angka positif!"), false)
+      : !deskripsiMinuman || !regexNamaDeskripsi.test(deskripsiMinuman)
+      ? (toast.error(
+          "Deskripsi minuman hanya boleh mengandung huruf dan spasi!"
+        ),
+        false)
+      : gambarMinuman && !validasiGambar(gambarMinuman)
+      ? (toast.error("Format gambar tidak valid atau ukuran melebihi 2MB!"),
+        false)
+      : true;
+  };
+
   const tambahMinuman = async () => {
-    if (
-      !namaMinuman ||
-      !kategoriMinuman ||
-      !hargaMinuman ||
-      !deskripsiMinuman
-    ) {
-      toast.error("Semua field wajib diisi!");
-      return;
-    }
+    if (!validasiFormulir()) return;
 
     setSedangMemuatTambahMinuman(true);
 
     try {
       let gambarUrl = "";
       if (gambarMinuman) {
-        const gambarRef = ref(storage, `Minuman/${gambarMinuman.name}`);
+        const sanitizedNama = namaMinuman.replace(/[^a-zA-Z0-9]/g, "_");
+        const gambarRef = ref(storage, `Minuman/${sanitizedNama}.jpg`);
         await uploadBytes(gambarRef, gambarMinuman);
         gambarUrl = await getDownloadURL(gambarRef);
       }

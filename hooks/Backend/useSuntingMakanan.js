@@ -30,21 +30,28 @@ export default function useSuntingMakanan(idMakanan) {
       const makananRef = doc(database, "makanan", idMakanan);
       const docSnap = await getDoc(makananRef);
 
-      docSnap.exists()
-        ? (() => {
-            const data = docSnap.data();
-            setNamaMakanan(data.Nama_Makanan);
-            setKategoriMakanan(data.Kategori_Makanan);
-            setHargaMakanan(data.Harga_Makanan);
-            setDeskripsiMakanan(data.Deskripsi_Makanan);
-            setGambarMakanan(data.Gambar_Makanan);
-            setGambarLama(data.Gambar_Makanan);
-          })()
-        : toast.error("Data makanan tidak ditemukan!");
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setNamaMakanan(data.Nama_Makanan);
+        setKategoriMakanan(data.Kategori_Makanan);
+        setHargaMakanan(data.Harga_Makanan);
+        setDeskripsiMakanan(data.Deskripsi_Makanan);
+        setGambarMakanan(data.Gambar_Makanan);
+        setGambarLama(data.Gambar_Makanan);
+      } else {
+        toast.error("Data makanan tidak ditemukan!");
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Terjadi kesalahan saat mengambil data makanan");
     }
+  };
+
+  const validasiGambar = (file) => {
+    if (!file) return true;
+    const formatDiperbolehkan = ["image/png", "image/jpeg", "image/jpg"];
+    const ukuranMaks = 2 * 1024 * 1024;
+    return formatDiperbolehkan.includes(file.type) && file.size <= ukuranMaks;
   };
 
   const validasiFormulir = () => {
@@ -63,6 +70,9 @@ export default function useSuntingMakanan(idMakanan) {
           "Deskripsi makanan hanya boleh mengandung huruf dan spasi!"
         ),
         false)
+      : gambarMakanan instanceof File && !validasiGambar(gambarMakanan)
+      ? (toast.error("Format gambar tidak valid atau ukuran melebihi 2MB!"),
+        false)
       : true;
   };
 
@@ -78,12 +88,11 @@ export default function useSuntingMakanan(idMakanan) {
       let gambarUrl = gambarMakanan;
 
       if (gambarMakanan instanceof File) {
-        gambarLama &&
-          (await (() => {
-            const storage = getStorage();
-            const gambarLamaRef = ref(storage, gambarLama);
-            return deleteObject(gambarLamaRef);
-          })());
+        if (gambarLama) {
+          const storage = getStorage();
+          const gambarLamaRef = ref(storage, gambarLama);
+          await deleteObject(gambarLamaRef);
+        }
 
         const storage = getStorage();
         const sanitizedNama = namaMakanan.replace(/[^a-zA-Z0-9]/g, "_");
@@ -111,7 +120,7 @@ export default function useSuntingMakanan(idMakanan) {
   };
 
   useEffect(() => {
-    idMakanan && ambilDataMakanan();
+    if (idMakanan) ambilDataMakanan();
   }, [idMakanan]);
 
   return {
