@@ -14,8 +14,8 @@ import {
   Dialog,
 } from "@material-tailwind/react";
 import Image from "next/image";
-import { IoTrashOutline } from "react-icons/io5";
 import { LuListFilter } from "react-icons/lu";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { format } from "date-fns";
 
 // Components
@@ -203,21 +203,20 @@ function Konten() {
                     </td>
                     <td className="flex justify-center">
                       <Button
-                        color="green"
                         size="sm"
+                        className="text-blue-500 hover:text-blue-700 bg-transparent"
                         onClick={() => tanganiSunting(admin.id)}
                         disabled={admin.Peran_Admin !== "Admin"}
                       >
-                        Edit
+                        <FaEdit />
                       </Button>
                       <Button
-                        color="red"
                         size="sm"
+                        className="text-blue-500 hover:text-blue-700 bg-transparent"
                         onClick={() => konfirmasiHapus(admin.id)}
-                        className="ml-2"
                         disabled={admin.Peran_Admin !== "Admin"}
                       >
-                        <IoTrashOutline className="w-5 h-5" />
+                        <FaTrashAlt />
                       </Button>
                     </td>
                   </tr>

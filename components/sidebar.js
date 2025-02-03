@@ -34,15 +34,16 @@ import useKeluarAkun from "@/hooks/Backend/useKeluarAkun";
 import useTampilkanAdminSesuaiID from "@/hooks/Backend/useTampilkanAdminSesuaiID";
 
 const profilAdmin = require("@/assets/images/profil.jpg");
+
 function Sidebar() {
-  const [buka, setBuka] = useState(0);
+  const [bukaDropdown, setBukaDropdown] = useState(0);
+  const [bukaDropdown2, setBukaDropdown2] = useState(0);
+  const [bukaDropdown3, setBukaDropdown3] = useState(0);
   const tanganiKeluarAkun = useKeluarAkun();
   const { adminData } = useTampilkanAdminSesuaiID();
-  const tanganiBuka = (nilai) => {
-    setBuka(buka === nilai ? 0 : nilai);
-  };
 
   const { navbarAktif, handlenavbarAktif } = useNavbarAktif();
+  const lokasiSaatIni = window.location.pathname;
 
   return (
     <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5 flex flex-col">
@@ -53,9 +54,7 @@ function Sidebar() {
       </div>
       <hr className="border border-gray-300 w-72 self-center" />
 
-      {/* List Utama dengan justify-between */}
-      <List className="flex flex-col justify-between flex-grow ">
-        {/* Bagian Menu */}
+      <List className="flex flex-col justify-between flex-grow">
         <div>
           <ListItem
             className={`${
@@ -69,15 +68,33 @@ function Sidebar() {
             Beranda
           </ListItem>
 
-          {/* Dropdown: Partisipan */}
-          <Accordion open={buka === 1} className=" py-1 ">
+          {/* Dropdown Partisipan */}
+          <Accordion
+            open={
+              bukaDropdown === 1 ||
+              lokasiSaatIni === "/dataAdmin" ||
+              lokasiSaatIni === "/dataPengguna"
+            }
+            icon={
+              <ChevronDownIcon
+                strokeWidth={2.5}
+                className={`ml-auto h-5 w-5 transition-transform ${
+                  bukaDropdown === 1 ||
+                  lokasiSaatIni === "/dataAdmin" ||
+                  lokasiSaatIni === "/dataPengguna"
+                    ? "rotate-180"
+                    : ""
+                }`}
+              />
+            }
+          >
             <ListItem
               className={`${
                 navbarAktif === "/dataAdmin" || navbarAktif === "/dataPengguna"
                   ? "bg-blue-500 p-0"
                   : "p-0"
               }`}
-              onClick={() => tanganiBuka(1)}
+              onClick={() => setBukaDropdown(bukaDropdown === 1 ? 0 : 1)}
             >
               <AccordionHeader className="p-3 border-none">
                 <ListItemPrefix>
@@ -100,12 +117,6 @@ function Sidebar() {
                 >
                   Partisipan
                 </Typography>
-                <ChevronDownIcon
-                  strokeWidth={2.5}
-                  className={`ml-auto h-5 w-5 transition-transform ${
-                    buka === 1 ? "rotate-180" : ""
-                  }`}
-                />
               </AccordionHeader>
             </ListItem>
             <AccordionBody className="py-1">
@@ -138,14 +149,33 @@ function Sidebar() {
             </AccordionBody>
           </Accordion>
 
-          <Accordion open={buka === 2} className=" py-1">
+          {/* Dropdown Produk */}
+          <Accordion
+            open={
+              bukaDropdown2 === 2 ||
+              lokasiSaatIni === "/dataMakanan" ||
+              lokasiSaatIni === "/dataMinuman"
+            }
+            icon={
+              <ChevronDownIcon
+                strokeWidth={2.5}
+                className={`mx-auto h-4 w-4 transition-transform ${
+                  bukaDropdown2 === 2 ||
+                  lokasiSaatIni === "/dataMakanan" ||
+                  lokasiSaatIni === "/dataMinuman"
+                    ? "rotate-180"
+                    : ""
+                }`}
+              />
+            }
+          >
             <ListItem
               className={`${
                 navbarAktif === "/dataMakanan" || navbarAktif === "/dataMinuman"
                   ? "bg-blue-500 p-0"
                   : "p-0"
               }`}
-              onClick={() => tanganiBuka(2)}
+              onClick={() => setBukaDropdown2(bukaDropdown2 === 2 ? 0 : 2)}
             >
               <AccordionHeader className="p-3 border-none">
                 <ListItemPrefix>
@@ -168,12 +198,6 @@ function Sidebar() {
                 >
                   Produk
                 </Typography>
-                <ChevronDownIcon
-                  strokeWidth={2.5}
-                  className={`ml-auto h-5 w-5 transition-transform ${
-                    buka === 2 ? "rotate-180" : ""
-                  }`}
-                />
               </AccordionHeader>
             </ListItem>
             <AccordionBody className="py-1">
@@ -208,7 +232,26 @@ function Sidebar() {
             </AccordionBody>
           </Accordion>
 
-          <Accordion open={buka === 3} className=" py-1">
+          {/* Dropdown Aktivitas */}
+          <Accordion
+            open={
+              bukaDropdown3 === 1 ||
+              lokasiSaatIni === "/dataTransaksi" ||
+              lokasiSaatIni === "/dataTestimoni"
+            }
+            icon={
+              <ChevronDownIcon
+                strokeWidth={2.5}
+                className={`ml-auto h-5 w-5 transition-transform ${
+                  bukaDropdown3 === 1 ||
+                  lokasiSaatIni === "/dataTransaksi" ||
+                  lokasiSaatIni === "/dataTestimoni"
+                    ? "rotate-180"
+                    : ""
+                }`}
+              />
+            }
+          >
             <ListItem
               className={`${
                 navbarAktif === "/dataTransaksi" ||
@@ -216,7 +259,7 @@ function Sidebar() {
                   ? "bg-blue-500 p-0"
                   : "p-0"
               }`}
-              onClick={() => tanganiBuka(3)}
+              onClick={() => setBukaDropdown3(bukaDropdown3 === 1 ? 0 : 1)}
             >
               <AccordionHeader className="p-3 border-none">
                 <ListItemPrefix>
@@ -232,12 +275,6 @@ function Sidebar() {
                 >
                   Aktivitas
                 </Typography>
-                <ChevronDownIcon
-                  strokeWidth={2.5}
-                  className={`ml-auto h-5 w-5 transition-transform ${
-                    buka === 3 ? "rotate-180" : ""
-                  }`}
-                />
               </AccordionHeader>
             </ListItem>
             <AccordionBody className="py-1">
@@ -299,7 +336,7 @@ function Sidebar() {
             </div>
           </div>
           <div className="border-t border-gray-400 mt-4" />
-          {/* Profile Section */}
+
           <div className="mt-4 flex flex-col items-center bg-white p-4 rounded-lg shadow-md">
             <div className="flex items-center w-full">
               <Image
