@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { useState, useEffect } from "react";
+import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { toast } from "react-toastify";
 import { auth } from "@/lib/firebaseConfig";
 import { useRouter } from "next/navigation";
@@ -7,6 +7,22 @@ import { useRouter } from "next/navigation";
 const useMasukDenganEmailKataSandi = () => {
   const pengarah = useRouter();
   const [sedangMemuat, setSedangMemuat] = useState(false);
+  const [adminID, setAdminID] = useState(null);
+
+  useEffect(() => {
+    const cekStatusLogin = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        sessionStorage.setItem("ID_Admin", user.uid);
+        sessionStorage.setItem(user.uid, "Aktif");
+        setAdminID(user.uid);
+      } else {
+        sessionStorage.removeItem("ID_Admin");
+        setAdminID(null);
+      }
+    });
+
+    return () => cekStatusLogin();
+  }, []);
 
   const masukDenganEmail = async (email, password) => {
     if (!email && !password) {
@@ -35,8 +51,8 @@ const useMasukDenganEmailKataSandi = () => {
 
       if (kredentialsAdmin.user) {
         sessionStorage.setItem("ID_Admin", kredentialsAdmin.user.uid);
-
         sessionStorage.setItem(kredentialsAdmin.user.uid, "Aktif");
+        setAdminID(kredentialsAdmin.user.uid);
 
         toast.success("Berhasil masuk!");
         pengarah.push("/beranda");
@@ -59,6 +75,7 @@ const useMasukDenganEmailKataSandi = () => {
   return {
     masukDenganEmail,
     sedangMemuat,
+    adminID,
   };
 };
 

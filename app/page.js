@@ -5,13 +5,14 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/navigation";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 // COMPONENTS
 import Memuat from "@/components/memuat";
 // HOOKS
 import useMasukDenganEmailKataSandi from "@/hooks/Backend/useMasukDenganEmailKataSandi";
-import { useSearchParams } from "next/navigation"; // Untuk membaca query parameter
+import { useSearchParams } from "next/navigation";
 
 const adminPromoTexts = [
   {
@@ -63,14 +64,21 @@ const adminPromoTexts = [
 
 const LoginAdmin = () => {
   const fotoAdmin = require("@/assets/images/LogoAyam.png");
-
+  const pengarah = useRouter();
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { masukDenganEmail, sedangMemuat } = useMasukDenganEmailKataSandi();
+  const { masukDenganEmail, sedangMemuat, adminID } =
+    useMasukDenganEmailKataSandi();
 
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect");
+
+  useEffect(() => {
+    if (adminID) {
+      pengarah.push("/beranda");
+    }
+  }, [adminID, pengarah]);
 
   useEffect(() => {
     if (redirect === "true") {
