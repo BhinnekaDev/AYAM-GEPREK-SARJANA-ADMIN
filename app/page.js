@@ -14,63 +14,14 @@ import Memuat from "@/components/memuat";
 import useMasukDenganEmailKataSandi from "@/hooks/Backend/useMasukDenganEmailKataSandi";
 import { useSearchParams } from "next/navigation";
 
-const adminPromoTexts = [
-  {
-    title: "Kelola Semua dengan Mudah",
-    description:
-      "Sebagai admin, Anda memiliki kontrol penuh untuk mengelola semua aspek platform kami secara efisien.",
-  },
-  {
-    title: "Pengelolaan Pengguna yang Sederhana",
-    description:
-      "Admin dapat dengan mudah mengelola pengguna, mengatur hak akses, dan memantau aktivitas mereka.",
-  },
-  {
-    title: "Keamanan Terjamin",
-    description:
-      "Admin bertanggung jawab menjaga keamanan sistem dengan memantau dan mengelola kontrol akses serta kebijakan privasi.",
-  },
-  {
-    title: "Pemantauan Real-Time",
-    description:
-      "Sebagai admin, Anda dapat memantau aktivitas platform secara real-time untuk memastikan kelancaran operasional.",
-  },
-  {
-    title: "Pengaturan Konten",
-    description:
-      "Admin memiliki kontrol penuh atas pengaturan dan moderasi konten, memastikan kualitas dan kepatuhan pada kebijakan.",
-  },
-  {
-    title: "Fleksibilitas dalam Pengelolaan Sistem",
-    description:
-      "Admin dapat menyesuaikan pengaturan sistem sesuai dengan kebutuhan dan kebijakan yang berlaku.",
-  },
-  {
-    title: "Komunikasi Efektif",
-    description:
-      "Admin dapat mengelola komunikasi internal dengan pengguna, memberikan pemberitahuan, dan mengatur pengumuman.",
-  },
-  {
-    title: "Pemeliharaan Sistem",
-    description:
-      "Sebagai admin, Anda bertanggung jawab untuk menjaga sistem tetap berjalan dengan baik melalui pemeliharaan rutin dan pembaruan.",
-  },
-  {
-    title: "Tugas Administratif",
-    description:
-      "Admin mengelola tugas administratif seperti pembuatan akun, pengaturan hak akses, dan pemrosesan permintaan dari pengguna.",
-  },
-];
-
 const LoginAdmin = () => {
   const fotoAdmin = require("@/assets/images/LogoAyam.png");
   const pengarah = useRouter();
-  const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const { masukDenganEmail, sedangMemuat, adminID } =
     useMasukDenganEmailKataSandi();
-
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect");
 
@@ -86,14 +37,6 @@ const LoginAdmin = () => {
         "Upsss, Maaf Anda belum bisa akses, silahkan login terlebih dahulu!"
       );
     }
-
-    const interval = setInterval(() => {
-      setCurrentTextIndex(
-        (prevIndex) => (prevIndex + 1) % adminPromoTexts.length
-      );
-    }, 4000);
-
-    return () => clearInterval(interval);
   }, [redirect]);
 
   const prosesLogin = async (e) => {
@@ -101,38 +44,28 @@ const LoginAdmin = () => {
     await masukDenganEmail(email, password);
   };
 
-  const [showPassword, setShowPassword] = useState(false);
-
   return (
-    <div className="bg-white h-screen flex justify-center items-center ">
+    <div className="bg-white h-screen flex justify-center items-center">
       <ToastContainer />
       <Card className="w-full max-w-6xl bg-[#ffe893] p-20 rounded-3xl shadow-2xl">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center h-full">
           <div className="flex flex-col justify-center items-center h-full">
             <motion.div
-              key={currentTextIndex}
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -50 }}
               transition={{ duration: 1, ease: "easeInOut" }}
               className="text-center"
             >
-              <motion.h2
-                initial={{ scale: 0.8 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: 0.8 }}
-                className="text-4xl font-extrabold text-gray-800 drop-shadow-lg"
+              <Typography
+                variant="h4"
+                className="text-gray-800 font-extrabold drop-shadow-lg"
               >
-                {adminPromoTexts[currentTextIndex].title}
-              </motion.h2>
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1, delay: 0.3 }}
-                className="text-lg mt-4 text-gray-700"
-              >
-                {adminPromoTexts[currentTextIndex].description}
-              </motion.p>
+                Selamat Datang Admin!
+              </Typography>
+              <Typography className="text-lg mt-4 text-gray-700">
+                Kelola semua fitur dengan mudah dan aman.
+              </Typography>
             </motion.div>
             <motion.div
               initial={{ scale: 0.9 }}
@@ -173,6 +106,7 @@ const LoginAdmin = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
+
               <div className="relative">
                 <Input
                   label="Kata Sandi"
@@ -194,7 +128,6 @@ const LoginAdmin = () => {
                   )}
                 </div>
               </div>
-
               <Button
                 type="submit"
                 color="yellow"
@@ -205,6 +138,16 @@ const LoginAdmin = () => {
                 {sedangMemuat ? <Memuat /> : "Masuk"}
               </Button>
             </form>
+            <div className="mt-4 text-center">
+              <Typography
+                variant="small"
+                color="black"
+                className="cursor-pointer hover:underline"
+                onClick={() => pengarah.push("/lupaKataSandi")}
+              >
+                Lupa Kata Sandi?
+              </Typography>
+            </div>
           </div>
         </div>
       </Card>
