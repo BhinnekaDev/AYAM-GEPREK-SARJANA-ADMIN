@@ -36,6 +36,8 @@ const LoginAdmin = () => {
       toast.error(
         "Upsss, Maaf Anda belum bisa akses, silahkan login terlebih dahulu!"
       );
+
+      window.history.replaceState(null, "", window.location.pathname);
     }
   }, [redirect]);
 
