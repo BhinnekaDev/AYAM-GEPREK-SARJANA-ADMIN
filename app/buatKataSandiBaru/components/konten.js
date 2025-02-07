@@ -27,17 +27,17 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="flex justify-center items-center w-full h-screen bg-white">
+    <div className="flex justify-center items-center w-full min-h-screen p-4 sm:p-8 sm:bg-white bg-[#ffe893]">
       <ToastContainer />
-      <Card className="w-full max-w-6xl p-28 bg-[#ffe893] rounded-xl shadow-2xl flex justify-center items-center">
-        <Card className="w-full max-w-lg bg-white py-10 px-8 rounded-2xl shadow-xl text-center">
+      <Card className="w-full max-w-6xl sm:p-16 bg-[#ffe893] rounded-xl shadow-2xl flex justify-center items-center">
+        <Card className="w-full max-w-lg bg-white py-8 sm:py-10 px-6 sm:px-8 rounded-2xl shadow-xl text-center">
           <Typography variant="h5" className="font-bold text-gray-900 mb-2">
             Buat Kata Sandi Baru
           </Typography>
-          <Typography className="text-gray-600 text-sm mb-6">
+          <Typography className="text-gray-600 text-sm mb-4 sm:mb-6">
             Kata sandi harus berbeda dari yang sebelumnya sudah digunakan
           </Typography>
-          <div className="mb-6 relative text-left">
+          <div className="mb-4 sm:mb-6 relative text-left">
             <div className="relative w-full">
               <Input
                 type={showPassword ? "text" : "password"}
@@ -62,7 +62,7 @@ const ResetPassword = () => {
               Harus terdiri dari setidaknya 8 karakter
             </p>
           </div>
-          <div className="mb-6 relative text-left">
+          <div className="mb-4 sm:mb-6 relative text-left">
             <div className="relative w-full">
               <Input
                 type={showConfirmPassword ? "text" : "password"}
@@ -91,7 +91,7 @@ const ResetPassword = () => {
             onClick={handleResetPassword}
             color="yellow"
             variant="filled"
-            className="w-full py-3 text-black bg-yellow-400 hover:bg-yellow-500 rounded-lg text-base"
+            className="w-full py-2 sm:py-3 text-black bg-yellow-400 hover:bg-yellow-500 rounded-lg text-base"
           >
             Pulihkan Kata Sandi
           </Button>

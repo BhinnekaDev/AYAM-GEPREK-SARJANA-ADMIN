@@ -7,7 +7,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-
 // COMPONENTS
 import Memuat from "@/components/memuat";
 // HOOKS
@@ -47,11 +46,11 @@ const LoginAdmin = () => {
   };
 
   return (
-    <div className="bg-white h-screen flex justify-center items-center">
+    <div className="bg-white h-screen flex justify-center items-center px-4">
       <ToastContainer />
-      <Card className="w-full max-w-6xl bg-[#ffe893] p-20 rounded-3xl shadow-2xl">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center h-full">
-          <div className="flex flex-col justify-center items-center h-full">
+      <Card className="w-full max-w-6xl bg-[#ffe893] p-10 sm:p-14 md:p-20 rounded-3xl shadow-2xl">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 items-center h-full">
+          <div className="flex flex-col-reverse sm:flex-col justify-center items-center h-full">
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
@@ -65,7 +64,7 @@ const LoginAdmin = () => {
               >
                 Selamat Datang Admin!
               </Typography>
-              <Typography className="text-lg mt-4 text-gray-700">
+              <Typography className="text-sm sm:text-lg mt-2 sm:mt-4 text-gray-700">
                 Kelola semua fitur dengan mudah dan aman.
               </Typography>
             </motion.div>
@@ -77,7 +76,7 @@ const LoginAdmin = () => {
                 repeatType: "reverse",
                 repeat: Infinity,
               }}
-              className="w-3/4 mt-10"
+              className="w-3/4 mt-6 sm:mt-10"
             >
               <Image
                 src={fotoAdmin}
@@ -88,17 +87,20 @@ const LoginAdmin = () => {
             </motion.div>
           </div>
 
-          <div className="p-10 bg-white rounded-2xl shadow-lg">
+          <div className="p-6 sm:p-10 bg-white rounded-2xl shadow-lg">
             <Typography
               variant="h4"
               className="text-center text-gray-800 font-semibold mb-4"
             >
               Login Admin
             </Typography>
-            <Typography className="text-center text-gray-600 mb-6">
+            <Typography className="text-center text-gray-600 mb-4 sm:mb-6">
               Masukkan email dan kata sandi untuk melanjutkan akses.
             </Typography>
-            <form className="space-y-6" onSubmit={prosesLogin}>
+            <form
+              className="space-y-4 sm:space-y-6 mt-4"
+              onSubmit={prosesLogin}
+            >
               <Input
                 label="Email"
                 name="email"

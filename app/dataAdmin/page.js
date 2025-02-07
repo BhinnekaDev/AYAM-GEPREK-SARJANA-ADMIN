@@ -24,7 +24,7 @@ const Page = () => {
   return (
     <div className="flex px-4 py-4 bg-gray-100">
       <ToastContainer />
-      <div className="w-[300px] bg-gray-100 border-r border-gray-200">
+      <div className="bg-gray-100 border-r border-gray-200">
         <Sidebar />
       </div>
 

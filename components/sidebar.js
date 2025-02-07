@@ -28,7 +28,6 @@ import { IoMdLogOut } from "react-icons/io";
 import { FaBowlFood } from "react-icons/fa6";
 import { MdEmojiFoodBeverage } from "react-icons/md";
 import useNavbarAktif from "@/hooks/Frontend/useSidebarAktif";
-
 // MY HOOKS
 import useKeluarAkun from "@/hooks/Backend/useKeluarAkun";
 import useTampilkanAdminSesuaiID from "@/hooks/Backend/useTampilkanAdminSesuaiID";
@@ -41,19 +40,17 @@ function Sidebar() {
   const [bukaDropdown3, setBukaDropdown3] = useState(0);
   const tanganiKeluarAkun = useKeluarAkun();
   const { adminData } = useTampilkanAdminSesuaiID();
-
   const { navbarAktif, handlenavbarAktif } = useNavbarAktif();
   const lokasiSaatIni = window.location.pathname;
 
   return (
     <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5 flex flex-col">
-      <div className="mb-4 p-2">
+      <div className="mb-4 p-2 md:p-4">
         <Typography variant="h4" color="blue-gray">
           SARJANA GEPREK
         </Typography>
       </div>
       <hr className="border border-gray-300 w-72 self-center" />
-
       <List className="flex flex-col justify-between flex-grow">
         <div>
           <ListItem
@@ -68,7 +65,6 @@ function Sidebar() {
             Beranda
           </ListItem>
 
-          {/* Dropdown Partisipan */}
           <Accordion
             open={
               bukaDropdown === 1 ||
@@ -78,7 +74,7 @@ function Sidebar() {
             icon={
               <ChevronDownIcon
                 strokeWidth={2.5}
-                className={`ml-auto h-5 w-5 transition-transform ${
+                className={`h-5 w-5 transition-transform ${
                   bukaDropdown === 1 ||
                   lokasiSaatIni === "/dataAdmin" ||
                   lokasiSaatIni === "/dataPengguna"
@@ -108,11 +104,11 @@ function Sidebar() {
                   />
                 </ListItemPrefix>
                 <Typography
-                  className={`${
+                  className={`text-start w-full ${
                     navbarAktif === "/dataAdmin" ||
                     navbarAktif === "/dataPengguna"
-                      ? "text-white mr-auto font-normal"
-                      : "mr-auto font-normal"
+                      ? "text-white"
+                      : "text-blue-500"
                   }`}
                 >
                   Partisipan
@@ -149,7 +145,6 @@ function Sidebar() {
             </AccordionBody>
           </Accordion>
 
-          {/* Dropdown Produk */}
           <Accordion
             open={
               bukaDropdown2 === 2 ||
@@ -232,7 +227,6 @@ function Sidebar() {
             </AccordionBody>
           </Accordion>
 
-          {/* Dropdown Aktivitas */}
           <Accordion
             open={
               bukaDropdown3 === 1 ||
