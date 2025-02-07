@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Menyembunyikan scrollbar pada semua browser dan memastikan scroll dapat dilakukan dengan tangan */
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hidden {
+  -ms-overflow-style: none; /* Menyembunyikan scrollbar di IE dan Edge */
+  scrollbar-width: none; /* Menyembunyikan scrollbar di Firefox */
+}
+
+/* Menambahkan gaya sentuhan untuk memastikan scrolling lancar di perangkat mobile */
+.scrollbar-hidden {
+  touch-action: auto;
+}

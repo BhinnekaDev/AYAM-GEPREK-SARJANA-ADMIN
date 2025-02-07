@@ -1,18 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import {
-  Typography,
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  CardFooter,
-  Menu,
-  MenuHandler,
-  MenuList,
-  MenuItem,
-  Dialog,
-} from "@material-tailwind/react";
+import { Typography, Button, Card, CardBody, CardHeader, CardFooter, Menu, MenuHandler, MenuList, MenuItem, Dialog } from "@material-tailwind/react";
 import Image from "next/image";
 import { LuListFilter } from "react-icons/lu";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
@@ -32,14 +20,7 @@ import useSuntingAdmin from "@/hooks/Backend/useSuntingAdmin";
 const profilAdmin = require("@/assets/images/profil.jpg");
 
 function Konten() {
-  const {
-    totalAdmin,
-    daftarAdmin,
-    sedangMemuatTampilkanAdmin,
-    halaman,
-    ambilHalamanSebelumnya,
-    ambilHalamanSelanjutnya,
-  } = useTampilkanAdmin();
+  const { totalAdmin, daftarAdmin, sedangMemuatTampilkanAdmin, halaman, ambilHalamanSebelumnya, ambilHalamanSelanjutnya } = useTampilkanAdmin();
 
   const { sedangMemuatHapusAdmin, hapusAdmin } = useHapusAdmin();
   const { suntingAdmin, sedangMemuatSuntingAdmin } = useSuntingAdmin();
@@ -76,11 +57,7 @@ function Konten() {
             <Typography className="text-xl">{totalAdmin}</Typography>
           </div>
           <div className="flex items-center">
-            <Button
-              size="sm"
-              onClick={() => setBukaModalTambahAdmin(true)}
-              className="items-center gap-2 focus:ring-0 bg-blue-500 w-40 h-8 justify-center"
-            >
+            <Button size="sm" onClick={() => setBukaModalTambahAdmin(true)} className="items-center gap-2 focus:ring-0 bg-blue-500 w-40 h-8 justify-center">
               <p className="text-white mx-auto">Tambah Admin</p>
             </Button>
           </div>
@@ -98,10 +75,7 @@ function Konten() {
                 <MenuHandler>
                   <Button className="flex items-center gap-4 tracking-wider bg-transparent text-black border border-gray-500 shadow-md hover:shadow-md">
                     Filter
-                    <LuListFilter
-                      className="text-xl bg-transparent"
-                      color="black"
-                    />
+                    <LuListFilter className="text-xl bg-transparent" color="black" />
                   </Button>
                 </MenuHandler>
                 <MenuList>
@@ -113,57 +87,30 @@ function Konten() {
           </div>
         </CardHeader>
 
-        <CardBody
-          className="overflow-y-auto"
-          style={{ maxHeight: "calc(100vh - 200px)" }}
-        >
+        <CardBody className="overflow-y-auto" style={{ maxHeight: "calc(100vh - 200px)" }}>
           {sedangMemuatTampilkanAdmin ? (
             <Memuat />
           ) : (
             <table className="w-full min-w-max table-auto text-left">
               <thead>
                 <tr>
-                  <th className="border-y border-blue-gray-100 py-3 px-4">
-                    Admin
-                  </th>
-                  <th className="border-y border-blue-gray-100 py-2 px-4 text-center">
-                    Fungsi
-                  </th>
-                  <th className="border-y border-blue-gray-100 py-2 px-4 text-center">
-                    Status
-                  </th>
-                  <th className="border-y border-blue-gray-100 py-2 px-4 text-center">
-                    Tanggal Pembuatan Akun
-                  </th>
-                  <th className="border-y border-blue-gray-100 text-center">
-                    Aksi
-                  </th>
+                  <th className="border-y border-blue-gray-100 py-3 px-4">Admin</th>
+                  <th className="border-y border-blue-gray-100 py-2 px-4 text-center">Fungsi</th>
+                  <th className="border-y border-blue-gray-100 py-2 px-4 text-center">Status</th>
+                  <th className="border-y border-blue-gray-100 py-2 px-4 text-center">Tanggal Pembuatan Akun</th>
+                  <th className="border-y border-blue-gray-100 text-center">Aksi</th>
                 </tr>
               </thead>
               <tbody>
                 {daftarAdmin.map((admin) => (
                   <tr key={admin.id} className="border-b border-blue-gray-50">
                     <td className="p-5 flex items-center gap-3">
-                      <Image
-                        src={profilAdmin}
-                        alt={admin.Nama_Pengguna}
-                        width={40}
-                        height={40}
-                        className="rounded-full"
-                      />
+                      <Image src={profilAdmin} alt={admin.Nama_Pengguna} width={40} height={40} className="rounded-full" />
                       <div>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-medium"
-                        >
+                        <Typography variant="small" color="blue-gray" className="font-medium">
                           {admin.Nama_Pengguna}
                         </Typography>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal opacity-70"
-                        >
+                        <Typography variant="small" color="blue-gray" className="font-normal opacity-70">
                           {admin.Email}
                         </Typography>
                       </div>
@@ -172,9 +119,7 @@ function Konten() {
                     <td className="text-center">
                       <span
                         className={(() => {
-                          const adminIdInStorage = sessionStorage.getItem(
-                            admin.id
-                          );
+                          const adminIdInStorage = sessionStorage.getItem(admin.id);
                           if (adminIdInStorage) {
                             return "bg-green-500 bg-opacity-15 text-green-500 text-xs px-4 py-2 uppercase font-bold rounded-lg tracking-wider inline-block";
                           } else {
@@ -183,39 +128,18 @@ function Konten() {
                         })()}
                       >
                         {(() => {
-                          const adminIdInStorage = sessionStorage.getItem(
-                            admin.id
-                          );
+                          const adminIdInStorage = sessionStorage.getItem(admin.id);
                           return adminIdInStorage ? "Aktif" : "Tidak Aktif";
                         })()}
                       </span>
                     </td>
 
-                    <td className="text-center">
-                      {admin.Tanggal_Pembuatan_Akun
-                        ? format(
-                            new Date(
-                              admin.Tanggal_Pembuatan_Akun.seconds * 1000
-                            ),
-                            "yyyy-MM-dd"
-                          )
-                        : "Tidak Diketahui"}
-                    </td>
+                    <td className="text-center">{admin.Tanggal_Pembuatan_Akun ? format(new Date(admin.Tanggal_Pembuatan_Akun.seconds * 1000), "yyyy-MM-dd") : "Tidak Diketahui"}</td>
                     <td className="flex justify-center">
-                      <Button
-                        size="sm"
-                        className="text-blue-500 hover:text-blue-700 bg-transparent"
-                        onClick={() => tanganiSunting(admin.id)}
-                        disabled={admin.Peran_Admin !== "Admin"}
-                      >
+                      <Button size="sm" className="text-blue-500 hover:text-blue-700 bg-transparent" onClick={() => tanganiSunting(admin.id)} disabled={admin.Peran_Admin !== "Admin"}>
                         <FaEdit />
                       </Button>
-                      <Button
-                        size="sm"
-                        className="text-blue-500 hover:text-blue-700 bg-transparent"
-                        onClick={() => konfirmasiHapus(admin.id)}
-                        disabled={admin.Peran_Admin !== "Admin"}
-                      >
+                      <Button size="sm" className="text-blue-500 hover:text-blue-700 bg-transparent" onClick={() => konfirmasiHapus(admin.id)} disabled={admin.Peran_Admin !== "Admin"}>
                         <FaTrashAlt />
                       </Button>
                     </td>
@@ -231,48 +155,20 @@ function Konten() {
             Halaman {halaman} dari {Math.ceil(totalAdmin / 5)}
           </Typography>
           <div className="flex items-center gap-2">
-            <Button
-              onClick={ambilHalamanSebelumnya}
-              variant="outlined"
-              size="sm"
-              disabled={sedangMemuatTampilkanAdmin || halaman === 1}
-            >
+            <Button onClick={ambilHalamanSebelumnya} variant="outlined" size="sm" disabled={sedangMemuatTampilkanAdmin || halaman === 1}>
               Sebelumnya
             </Button>
-            <Button
-              onClick={ambilHalamanSelanjutnya}
-              variant="outlined"
-              size="sm"
-              disabled={
-                sedangMemuatTampilkanAdmin ||
-                halaman === Math.ceil(totalAdmin / 5)
-              }
-            >
+            <Button onClick={ambilHalamanSelanjutnya} variant="outlined" size="sm" disabled={sedangMemuatTampilkanAdmin || halaman === Math.ceil(totalAdmin / 5)}>
               Selanjutnya
             </Button>
           </div>
         </CardFooter>
       </Card>
 
-      <ModalTambahAdmin
-        terbuka={bukaModalTambahAdmin}
-        tertutup={setBukaModalTambahAdmin}
-      />
-      <ModalSuntingAdmin
-        terbuka={bukaModalSuntingAdmin}
-        tertutup={setBukaModalSuntingAdmin}
-        adminYangTerpilih={adminYangTerpilih}
-        suntingAdmin={suntingAdmin}
-        sedangMemuatSuntingAdmin={sedangMemuatSuntingAdmin}
-      />
+      <ModalTambahAdmin terbuka={bukaModalTambahAdmin} tertutup={setBukaModalTambahAdmin} />
+      <ModalSuntingAdmin terbuka={bukaModalSuntingAdmin} tertutup={setBukaModalSuntingAdmin} adminYangTerpilih={adminYangTerpilih} suntingAdmin={suntingAdmin} sedangMemuatSuntingAdmin={sedangMemuatSuntingAdmin} />
 
-      <ModalKonfirmasiHapusAdmin
-        terbuka={bukaModalHapusAdmin}
-        tertutup={setBukaModalHapusAdmin}
-        adminYangTerpilih={adminYangTerpilih}
-        konfirmasiHapusAdmin={hapus}
-        sedangMemuatHapusAdmin={sedangMemuatHapusAdmin}
-      />
+      <ModalKonfirmasiHapusAdmin terbuka={bukaModalHapusAdmin} tertutup={setBukaModalHapusAdmin} adminYangTerpilih={adminYangTerpilih} konfirmasiHapusAdmin={hapus} sedangMemuatHapusAdmin={sedangMemuatHapusAdmin} />
     </div>
   );
 }
