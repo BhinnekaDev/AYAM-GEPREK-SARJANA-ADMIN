@@ -14,7 +14,6 @@ const useTambahMakanan = () => {
     useState(false);
 
   const sanitizeInput = (input) => input.replace(/[^a-zA-Z\s]/g, "").trim();
-
   const validateHarga = (harga) => /^[0-9]*\.?[0-9]+$/.test(harga);
 
   const resetForm = () => {
@@ -25,33 +24,48 @@ const useTambahMakanan = () => {
     setGambarMakanan(null);
   };
 
+  const resizeImage = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+          canvas.width = 200;
+          canvas.height = 200;
+          ctx.drawImage(img, 0, 0, 200, 200);
+          canvas.toBlob(resolve, "image/jpeg");
+        };
+      };
+    });
+  };
+
   const tambahMakanan = async () => {
-    !namaMakanan || !kategoriMakanan || !hargaMakanan || !deskripsiMakanan
-      ? toast.error("Semua field wajib diisi!")
-      : null;
-
-    const sanitizedNamaMakanan = sanitizeInput(namaMakanan);
-    const sanitizedDeskripsiMakanan = sanitizeInput(deskripsiMakanan);
-
-    !sanitizedNamaMakanan || !sanitizedDeskripsiMakanan
-      ? toast.error("Nama dan deskripsi makanan hanya boleh mengandung huruf!")
-      : null;
-
-    !validateHarga(hargaMakanan)
-      ? toast.error(
-          "Harga makanan hanya boleh berupa angka tanpa tanda + atau -!"
-        )
-      : null;
-
     if (
       !namaMakanan ||
       !kategoriMakanan ||
       !hargaMakanan ||
-      !deskripsiMakanan ||
-      !sanitizedNamaMakanan ||
-      !sanitizedDeskripsiMakanan ||
-      !validateHarga(hargaMakanan)
+      !deskripsiMakanan
     ) {
+      toast.error("Semua field wajib diisi!");
+      return;
+    }
+
+    const sanitizedNamaMakanan = sanitizeInput(namaMakanan);
+    const sanitizedDeskripsiMakanan = sanitizeInput(deskripsiMakanan);
+
+    if (!sanitizedNamaMakanan || !sanitizedDeskripsiMakanan) {
+      toast.error("Nama dan deskripsi makanan hanya boleh mengandung huruf!");
+      return;
+    }
+
+    if (!validateHarga(hargaMakanan)) {
+      toast.error(
+        "Harga makanan hanya boleh berupa angka tanpa tanda + atau -!"
+      );
       return;
     }
 
@@ -59,16 +73,16 @@ const useTambahMakanan = () => {
 
     try {
       const gambarUrl = gambarMakanan
-        ? await (() => {
+        ? await resizeImage(gambarMakanan).then((resizedImage) => {
             const sanitizedFileName = `${sanitizedNamaMakanan.replace(
               /\s+/g,
               "_"
             )}.jpg`;
             const gambarRef = ref(storage, `Makanan/${sanitizedFileName}`);
-            return uploadBytes(gambarRef, gambarMakanan).then(() =>
+            return uploadBytes(gambarRef, resizedImage).then(() =>
               getDownloadURL(gambarRef)
             );
-          })()
+          })
         : "";
 
       const makananCollection = collection(database, "makanan");
