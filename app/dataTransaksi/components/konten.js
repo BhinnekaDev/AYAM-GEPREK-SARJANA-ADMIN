@@ -39,7 +39,7 @@ function Konten() {
   };
 
   return (
-    <div className="p-4 h-screen bg-gray-100">
+    <div className="p-4  bg-gray-100">
       <Card className=" bg-white shadow-md mb-5">
         <div className="w-full flex justify-between text-blue-gray-900 p-4">
           <div className="space-y-2">
@@ -58,7 +58,7 @@ function Konten() {
         <CardHeader floated={false} shadow={false} className="rounded-none">
           <div className="flex items-center text-center justify-between mx-2">
             <Typography variant="h5" color="blue-gray">
-              Tabel Data Transaksi
+              Tabel Data Transaksiss
             </Typography>
             <div className="flex gap-4">
               <Menu>
