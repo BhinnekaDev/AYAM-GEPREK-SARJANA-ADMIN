@@ -17,7 +17,7 @@ const ModalKonfirmasiHapusAdmin = ({
   tertutup,
   adminYangTerpilih,
   konfirmasiHapusAdmin,
-  sedangMemuatHapus,
+  sedangMemuatHapusAdmin,
 }) => {
   return (
     <Dialog
@@ -52,12 +52,14 @@ const ModalKonfirmasiHapusAdmin = ({
           onClick={konfirmasiHapusAdmin}
           variant="gradient"
           color="red"
-          disabled={sedangMemuatHapus}
+          disabled={sedangMemuatHapusAdmin}
           className={`${
-            sedangMemuatHapus ? "opacity-50 cursor-not-allowed" : "opacity-100"
+            sedangMemuatHapusAdmin
+              ? "opacity-50 cursor-not-allowed"
+              : "opacity-100"
           }`}
         >
-          {sedangMemuatHapus ? <Memuat /> : "Hapus Admin"}{" "}
+          {sedangMemuatHapusAdmin ? <Memuat /> : "Hapus Admin"}{" "}
         </Button>
       </DialogFooter>
     </Dialog>

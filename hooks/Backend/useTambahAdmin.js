@@ -8,7 +8,10 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  updateCurrentUser,
+} from "firebase/auth";
 import { toast } from "react-toastify";
 // PERPUSTAKAAN KAMI
 import { database, auth } from "@/lib/firebaseConfig";
@@ -123,12 +126,19 @@ const useTambahAdmin = () => {
       }
 
       const kataSandi = "123456";
+
+      const penggunaSekarang = auth.currentUser;
+
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         kataSandi
       );
-      const user = userCredential.user;
+      const userBaru = userCredential.user;
+
+      if (penggunaSekarang) {
+        await updateCurrentUser(auth, penggunaSekarang);
+      }
 
       const referensiAdmin = collection(database, "admin");
       const dataAdmin = {
@@ -141,8 +151,9 @@ const useTambahAdmin = () => {
         Tanggal_Pembuatan_Akun: serverTimestamp(),
       };
 
-      await setDoc(doc(referensiAdmin, user.uid), dataAdmin);
+      await setDoc(doc(referensiAdmin, userBaru.uid), dataAdmin);
       toast.success("Admin berhasil ditambahkan!");
+
       aturUlangFormulir();
       window.location.reload();
     } catch (error) {
