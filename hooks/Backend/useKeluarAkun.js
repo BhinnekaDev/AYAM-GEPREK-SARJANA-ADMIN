@@ -6,12 +6,14 @@ import { auth } from "@/lib/firebaseConfig";
 const useKeluarAkun = () => {
   const tanganiKeluarAkun = useCallback(async () => {
     try {
+      const adminId = localStorage.getItem("ID_Admin");
+
       await signOut(auth);
-      sessionStorage.removeItem("ID_Admin");
-      const adminId = sessionStorage.getItem("ID_Admin");
+
       if (adminId) {
-        sessionStorage.removeItem(adminId);
+        localStorage.removeItem(adminId);
       }
+      localStorage.removeItem("ID_Admin");
 
       toast.success("Anda telah berhasil keluar.", { autoClose: 3000 });
 
