@@ -7,12 +7,12 @@ import ModalEditMinuman from "@/components/modalEditMinuman";
 import Image from "next/image";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { formatRupiah } from "@/constants/formatRupiah";
+import { CiCircleInfo } from "react-icons/ci";
+
 import useTampilkanMinuman from "@/hooks/Backend/useTampilkanMinuman";
 import useHapusMinuman from "@/hooks/Backend/useHapusMinuman";
 
 const fotoMinuman = require("@/assets/images/LogoAyam.png");
-
-const TABLE_HEAD = ["Gambar", "Nama", "Kategori", "Harga", "Deskripsi", "Aksi"];
 
 const Konten = () => {
   const [kategoriDipilih, setKategoriDipilih] = useState("Semua Kategori");
@@ -108,25 +108,36 @@ const Konten = () => {
             <table className="w-full min-w-max table-auto text-center">
               <thead className="text-center">
                 <tr>
-                  {TABLE_HEAD.map((head) => (
-                    <th
-                      key={head}
-                      className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
-                    >
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal leading-none opacity-70"
-                      >
-                        {head}
-                      </Typography>
-                    </th>
-                  ))}
+                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"></th>
+                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4 w-1">
+                    Gambar
+                  </th>
+                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                    Nama
+                  </th>
+                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                    Kategori
+                  </th>
+                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                    Harga
+                  </th>
+                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                    Deskripsi
+                  </th>
+                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                    Aksi
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {menuPerHalaman.map((minuman) => (
                   <tr key={minuman.id}>
+                    <td>
+                      <CiCircleInfo
+                        className="h-7 w-7 m-auto text-blue-500 cursor-pointer hover:text-black duration-300 "
+                        onClick={() => tampilkanDetailPengguna(pengguna)}
+                      />
+                    </td>
                     <td className="p-4 flex items-center justify-center">
                       <Image
                         src={minuman.Gambar_Minuman || fotoMinuman}

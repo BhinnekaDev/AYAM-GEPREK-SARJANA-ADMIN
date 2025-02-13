@@ -1,19 +1,20 @@
 import { useState } from "react";
 import { Card, Typography, Button } from "@material-tailwind/react";
+import Image from "next/image";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { CiCircleInfo } from "react-icons/ci";
+//MODAL
 import ModalTambahMenuMakanan from "@/components/modalTambahMenuMakanan";
 import ModalKonfirmasiHapusMakanan from "@/components/modalKonfirmasiHapusMakanan";
 import ModalEditMakanan from "@/components/modalEditMakanan";
-import Image from "next/image";
-import { FaEdit, FaTrashAlt } from "react-icons/fa";
-const fotoMakanan = require("@/assets/images/LogoAyam.png");
+import ModalDetailMakanan from "@/components/modalDetailMakanan";
+
 // KONSTANTA
 import { formatRupiah } from "@/constants/formatRupiah";
 // PENGAIT
 import useTampilkanMakanan from "@/hooks/Backend/useTampilkanMakanan";
 import useHapusMakanan from "@/hooks/Backend/useHapusMakanan";
-
-const TABLE_HEAD = ["Gambar", "Nama", "Kategori", "Harga", "Deskripsi", "Aksi"];
-
+const fotoMakanan = require("@/assets/images/LogoAyam.png");
 const Konten = () => {
   const [kategoriDipilih, setKategoriDipilih] = useState("Semua Kategori");
   const [menuBaru, setMenuBaru] = useState({
@@ -26,8 +27,10 @@ const Konten = () => {
   const [modalTerbuka, setModalTerbuka] = useState(false);
   const [modalEditTerbuka, setModalEditTerbuka] = useState(false);
   const [makananYangTerpilih, setMakananYangTerpilih] = useState(null);
+  const [makananDipilih, setMakananDipilih] = useState(null);
   const [bukaModalHapusMakanan, setBukaModalHapusMakanan] = useState(false);
   const { hapusMakanan, sedangMemuatHapusMakanan } = useHapusMakanan();
+  const [modalDetailTerbuka, setModalDetailTerbuka] = useState(false);
 
   const {
     halaman,
@@ -42,6 +45,16 @@ const Konten = () => {
     setMakananYangTerpilih(idMakanan);
     setBukaModalHapusMakanan(true);
   };
+  const tampilkanDetailMakanan = (idMakanan) => {
+    setMakananDipilih(idMakanan);
+    setModalDetailTerbuka(true);
+  };
+
+  const tampilkanMakananDetial = (idMakanan) => {
+    setMakananYangTerpilih(idMakanan);
+    setModalDetailTerbuka(true);
+  };
+
   const hapus = async () => {
     if (makananYangTerpilih) {
       await hapusMakanan(makananYangTerpilih);
@@ -108,25 +121,36 @@ const Konten = () => {
             <table className="w-full min-w-max table-auto text-center">
               <thead className="text-center">
                 <tr>
-                  {TABLE_HEAD.map((head) => (
-                    <th
-                      key={head}
-                      className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
-                    >
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal leading-none opacity-70"
-                      >
-                        {head}
-                      </Typography>
-                    </th>
-                  ))}
+                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"></th>
+                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4 w-1">
+                    Gambar
+                  </th>
+                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                    Nama
+                  </th>
+                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                    Kategori
+                  </th>
+                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                    Harga
+                  </th>
+                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                    Deskripsi
+                  </th>
+                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                    Aksi
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {menuPerHalaman.map((makanan) => (
                   <tr key={makanan.id}>
+                    <td>
+                      <CiCircleInfo
+                        className="h-7 w-7 m-auto text-blue-500 cursor-pointer hover:text-black duration-300"
+                        onClick={() => tampilkanMakananDetial(makanan)}
+                      />
+                    </td>
                     <td className="p-4 flex items-center justify-center">
                       <Image
                         src={makanan.Gambar_Makanan || fotoMakanan}
@@ -212,6 +236,11 @@ const Konten = () => {
         makananYangTerpilih={makananYangTerpilih}
         konfirmasiHapusMakanan={hapus}
         sedangMemuatHapus={sedangMemuatHapusMakanan}
+      />
+      <ModalDetailMakanan
+        terbuka={modalDetailTerbuka}
+        tertutup={setModalDetailTerbuka}
+        makanan={makananYangTerpilih}
       />
     </div>
   );
