@@ -68,7 +68,7 @@ function Konten() {
   };
 
   return (
-    <div>
+    <div className="overflow-hidden">
       <Card className="max-screen bg-white shadow-md mb-5">
         <div className="w-full flex justify-between text-blue-gray-900 p-4">
           <div className="space-y-2">
@@ -172,7 +172,7 @@ function Konten() {
                     <td className="text-center">
                       <span
                         className={(() => {
-                          const adminIdInStorage = localStorage.getItem(
+                          const adminIdInStorage = sessionStorage.getItem(
                             admin.id
                           );
                           if (adminIdInStorage) {
@@ -183,7 +183,7 @@ function Konten() {
                         })()}
                       >
                         {(() => {
-                          const adminIdInStorage = localStorage.getItem(
+                          const adminIdInStorage = sessionStorage.getItem(
                             admin.id
                           );
                           return adminIdInStorage ? "Aktif" : "Tidak Aktif";

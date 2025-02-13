@@ -95,7 +95,7 @@ const chartConfig = {
 
 function Dashboard() {
   return (
-    <div className="p-4 h-screen bg-gray-100">
+    <div className=" h-screen ">
       {/* Pemasukan dan Pengeluaran Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
         <Card className="p-4 shadow-md">

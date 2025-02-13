@@ -22,16 +22,13 @@ const Page = () => {
   }, [pengarah]);
 
   return (
-    <div className="flex px-4 py-4 bg-gray-100">
+    <div className="sm:p-4 flex flex-col sm:flex-row bg-gray-100 h-screen overflow-y-hidden">
       <ToastContainer />
-      <div className="bg-gray-100 border-r border-gray-200">
+      <div className=" bg-gray-100 border-r border-gray-200">
         <Sidebar />
       </div>
-
-      <div className="flex flex-col flex-1">
-        <div className="flex-1 bg-gray-100 px-2 py-2">
-          <Konten />
-        </div>
+      <div className="py-3 sm:py-0 flex-1 px-3 sm:px-3">
+        <Konten />
       </div>
     </div>
   );

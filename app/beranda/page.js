@@ -24,10 +24,10 @@ const Beranda = () => {
   }, [pengarah]);
 
   return (
-    <section className="p-4 flex h-screen bg-[#eff0f3]">
+    <section className="sm:p-4 flex flex-col sm:flex-row h-screen bg-[#eff0f3]">
       <ToastContainer />
       <Sidebar pengarah={pengarah} />
-      <div className="flex flex-col flex-1 gap-4 mx-3">
+      <div className="py-3 sm:py-0 flex flex-col flex-1 gap-4 mx-3">
         <Konten />
       </div>
     </section>
