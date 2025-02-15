@@ -9,14 +9,16 @@ import {
   CardFooter,
 } from "@material-tailwind/react";
 import Image from "next/image";
-import { IoTrashOutline } from "react-icons/io5";
+import { FaTrashAlt } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { CiCircleInfo } from "react-icons/ci";
 
 // HOOKS
 import useTampilkanPengguna from "@/hooks/Backend/useTampilkanPengguna";
 import useHapusPengguna from "@/hooks/Backend/useHapusPengguna";
 //COMPONENTS
 import ModalKonfirmasiHapusPengguna from "@/components/modalKonfirmasiHapusPengguna";
+import ModalDetailPengguna from "@/components/modalDetailPengguna";
 
 function Konten() {
   const {
@@ -32,6 +34,7 @@ function Konten() {
   const [bukaModalHapusPengguna, setBukaModalHapusPengguna] = useState(false);
   const [penggunaYangTerpilih, setPenggunaYangTerpilih] = useState(null);
   const { hapusPengguna, sedangMemuatHapusPengguna } = useHapusPengguna();
+  const [bukaModalDetailPengguna, setBukaModalDetailPengguna] = useState(false);
 
   const konfirmasiHapusPengguna = (idPengguna) => {
     setPenggunaYangTerpilih(idPengguna);
@@ -44,6 +47,10 @@ function Konten() {
       setBukaModalHapusPengguna(false);
       setPenggunaYangTerpilih(null);
     }
+  };
+  const tampilkanDetailPengguna = (idPengguna) => {
+    setPenggunaYangTerpilih(idPengguna);
+    setBukaModalDetailPengguna(true);
   };
 
   return (
@@ -67,7 +74,7 @@ function Konten() {
         </CardHeader>
 
         <CardBody
-          className="overflow-y-auto"
+          className="overflow-hidden sm:overflow-y-auto"
           style={{ maxHeight: "calc(100vh - 200px)" }}
         >
           {sedangMemuatPengguna ? (
@@ -78,17 +85,32 @@ function Konten() {
             <table className="w-full min-w-max table-auto text-left">
               <thead>
                 <tr>
-                  <th className="border-y py-3 px-4">Nama Lengkap</th>
-                  <th className="border-y py-2 px-4 text-center">Email</th>
-                  <th className="border-y py-2 px-4 text-center">No HP</th>
-                  <th className="border-y py-2 px-4 text-center">Alamat</th>
-                  <th className="border-y text-center">Aksi</th>
+                  <th className="border-y py-2 px-4"></th>
+                  <th className="border-y py-2 px-4">Nama Lengkap</th>
+                  <th className="hidden sm:table-cell border-y py-2 px-4 text-center">
+                    Email
+                  </th>
+                  <th className="hidden sm:table-cell border-y py-2 px-4 text-center">
+                    No HP
+                  </th>
+                  <th className="hidden sm:table-cell border-y py-2 px-4 text-center">
+                    Alamat
+                  </th>
+                  <th className="border-y py-2 px-2 sm:text-center text-center">
+                    Aksi
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {daftarPengguna.map((pengguna) => (
                   <tr key={pengguna.id} className="border-b">
-                    <td className="p-5 flex items-center gap-3">
+                    <td>
+                      <CiCircleInfo
+                        className="h-7 w-7 text-blue-500 m-auto cursor-pointer hover:text-black duration-300"
+                        onClick={() => tampilkanDetailPengguna(pengguna)}
+                      />
+                    </td>
+                    <td className="p-5 flex flex-col sm:flex-row items-start sm:items-center gap-3">
                       <Image
                         src={pengguna.profileImage || fotoProfilDefault}
                         alt={
@@ -100,8 +122,7 @@ function Konten() {
                         height={40}
                         className="rounded-full"
                       />
-
-                      <div>
+                      <div className="">
                         <Typography
                           variant="small"
                           color="blue-gray"
@@ -110,19 +131,39 @@ function Konten() {
                           {pengguna.Nama_Lengkap ||
                             `${pengguna.Nama_Depan} ${pengguna.Nama_Belakang}`}
                         </Typography>
+                        <Typography
+                          variant="small"
+                          color="gray"
+                          className="sm:hidden"
+                        >
+                          {pengguna.Email}
+                        </Typography>
                       </div>
                     </td>
-                    <td className="text-center">{pengguna.Email}</td>
-                    <td className="text-center">{pengguna.No_Telepon}</td>
-                    <td className="text-center">{pengguna.Alamat}</td>
-                    <td className="flex justify-center">
+                    <td className="hidden sm:table-cell text-center">
+                      {pengguna.Email}
+                    </td>
+                    <td className="hidden sm:table-cell text-center">
+                      {pengguna.No_Telepon}
+                    </td>
+                    <td
+                      className="hidden sm:table-cell text-center max-w-[180px] truncate"
+                      title={`${pengguna.Alamat.Alamat_Jalan} ${pengguna.Alamat.Alamat_Detail}, RT${pengguna.Alamat.RT}/RW${pengguna.Alamat.RW}, ${pengguna.Alamat.Kecamatan}, ${pengguna.Alamat.Kota}, ${pengguna.Alamat.Provinsi}, ${pengguna.Alamat.Kode_Pos}`}
+                    >
+                      {pengguna.Alamat
+                        ? pengguna.Alamat.Alamat_Detail.length > 40
+                          ? pengguna.Alamat.Alamat_Detail.slice(0, 40) + "..."
+                          : pengguna.Alamat.Alamat_Detail
+                        : "-"}
+                    </td>
+                    <td className="p-2 sm:flex justify-center">
                       <Button
                         color="red"
                         size="sm"
-                        className="ml-2"
+                        className="text-blue-500 hover:text-blue-700 bg-transparent"
                         onClick={() => konfirmasiHapusPengguna(pengguna.id)}
                       >
-                        <IoTrashOutline className="w-5 h-5" />
+                        <FaTrashAlt className="w-5 h-5" />
                       </Button>
                     </td>
                   </tr>
@@ -163,6 +204,11 @@ function Konten() {
         penggunaYangTerpilih={penggunaYangTerpilih}
         konfirmasiHapusPengguna={hapus}
         sedangMemuatHapus={sedangMemuatHapusPengguna}
+      />
+      <ModalDetailPengguna
+        terbuka={bukaModalDetailPengguna}
+        tertutup={setBukaModalDetailPengguna}
+        pengguna={penggunaYangTerpilih}
       />
     </div>
   );
