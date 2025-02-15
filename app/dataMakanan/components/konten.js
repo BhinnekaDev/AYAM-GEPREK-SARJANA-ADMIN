@@ -119,25 +119,26 @@ const Konten = () => {
             <p>Memuat data makanan...</p>
           ) : (
             <table className="w-full min-w-max table-auto text-center">
-              <thead className="text-center">
+              <thead>
                 <tr>
-                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"></th>
-                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4 w-1">
+                  <th className="border-y border-blue-gray-100  py-3 px-4"></th>
+                  <th className="hidden sm:table-cell border-y border-blue-gray-100  py-3 px-4 w-1">
                     Gambar
                   </th>
-                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
-                    Nama
+
+                  <th className="border-y border-blue-gray-100 text-center py-3 px-4">
+                    Nama Makanan
                   </th>
-                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                  <th className="hidden sm:table-cell border-y border-blue-gray-100  py-3 px-4">
                     Kategori
                   </th>
-                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                  <th className="hidden sm:table-cell border-y border-blue-gray-100  py-3 px-4">
                     Harga
                   </th>
-                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                  <th className="hidden sm:table-cell border-y border-blue-gray-100  py-3 px-4">
                     Deskripsi
                   </th>
-                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                  <th className="border-y border-blue-gray-100  py-3 px-4">
                     Aksi
                   </th>
                 </tr>
@@ -151,37 +152,44 @@ const Konten = () => {
                         onClick={() => tampilkanMakananDetial(makanan)}
                       />
                     </td>
-                    <td className="p-4 flex items-center justify-center">
+                    <td className="hidden sm:table-cell p-4">
                       <Image
                         src={makanan.Gambar_Makanan || fotoMakanan}
                         alt={makanan.Nama_Makanan}
                         width={50}
                         height={50}
-                        className="rounded-md shadow-md flex items-center justify-center"
+                        className="rounded-md shadow-md mx-auto"
                       />
                     </td>
-                    <td className="p-4">{makanan.Nama_Makanan}</td>
-                    <td className="p-4">{makanan.Kategori_Makanan}</td>
-                    <td className="p-4">
+
+                    <td className="p-4 max-w-[150px] truncate">
+                      {makanan.Nama_Makanan}
+                    </td>
+                    <td className="p-4 hidden sm:table-cell max-w-[50px] truncate ">
+                      {makanan.Kategori_Makanan}
+                    </td>
+                    <td className="p-4 hidden sm:table-cell ">
                       {formatRupiah(makanan.Harga_Makanan)}
                     </td>
-                    <td className="p-4">{makanan.Deskripsi_Makanan}</td>
+                    <td className="p-4 hidden sm:table-cell ">
+                      {makanan.Deskripsi_Makanan}
+                    </td>
                     <td className="p-4">
-                      <div className="flex justify-center items-center gap-4">
+                      <div className="flex flex-row justify-center items-center gap-2">
                         <Button
                           onClick={() => {
                             setMakananYangTerpilih(makanan.id);
                             setModalEditTerbuka(true);
                           }}
                           size="sm"
-                          className="text-blue-500 hover:text-blue-700 bg-transparent"
+                          className="text-blue-500 hover:text-blue-700 bg-transparent flex items-center justify-center"
                         >
                           <FaEdit />
                         </Button>
                         <Button
                           onClick={() => konfirmasiHapus(makanan.id)}
                           size="sm"
-                          className="text-blue-500 hover:text-blue-700 bg-transparent"
+                          className="text-blue-500 hover:text-blue-700 bg-transparent flex items-center justify-center"
                         >
                           <FaTrashAlt />
                         </Button>
@@ -194,11 +202,17 @@ const Konten = () => {
           )}
         </div>
 
-        <div className="flex justify-between items-center mt-4">
-          <Typography variant="small" color="blue-gray" className="font-normal">
-            Halaman {halaman} dari {Math.ceil(totalMakanan / itemsPerPage)}
-          </Typography>
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row justify-between items-center mt-4 text-center">
+          <div className="order-2 sm:order-1 mt-2 sm:mt-0">
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="font-normal"
+            >
+              Halaman {halaman} dari {Math.ceil(totalMakanan / itemsPerPage)}
+            </Typography>
+          </div>
+          <div className="flex items-center gap-2 order-1 sm:order-2">
             <Button
               onClick={ambilHalamanSebelumnya}
               variant="outlined"

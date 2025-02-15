@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Card, Typography, Button } from "@material-tailwind/react";
 import ModalTambahMenuMinuman from "@/components/modalTambahMenuMinuman";
+import ModalDetailMinuman from "@/components/modalDetailMinuman";
 import ModalKonfirmasiHapusMinuman from "@/components/modalKonfirmasiHapusMinuman";
 import ModalEditMinuman from "@/components/modalEditMinuman";
 import Image from "next/image";
@@ -26,7 +27,9 @@ const Konten = () => {
   const [modalTerbuka, setModalTerbuka] = useState(false);
   const [modalEditTerbuka, setModalEditTerbuka] = useState(false);
   const [minumanYangTerpilih, setMinumanYangTerpilih] = useState(null);
+  const [minumanDipilih, setMinumanDipilih] = useState(null);
   const [bukaModalHapusMinuman, setBukaModalHapusMinuman] = useState(false);
+  const [modalDetailTerbuka, setModalDetailTerbuka] = useState(false);
 
   const { hapusMinuman, sedangMemuatHapusMinuman } = useHapusMinuman();
 
@@ -51,6 +54,10 @@ const Konten = () => {
   const konfirmasiHapus = (idMinuman) => {
     setMinumanYangTerpilih(idMinuman);
     setBukaModalHapusMinuman(true);
+  };
+  const tampilkanDetailMinuman = (idMinuman) => {
+    setMinumanDipilih(idMinuman);
+    setModalDetailTerbuka(true);
   };
 
   const hapus = async () => {
@@ -106,25 +113,25 @@ const Konten = () => {
             <p>Memuat data minuman...</p>
           ) : (
             <table className="w-full min-w-max table-auto text-center">
-              <thead className="text-center">
+              <thead>
                 <tr>
-                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"></th>
-                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4 w-1">
+                  <th className="border-y border-blue-gray-100 py-3 px-4"></th>
+                  <th className="hidden sm:table-cell border-y border-blue-gray-100 py-3 px-4 w-1">
                     Gambar
                   </th>
-                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
-                    Nama
+                  <th className="border-y border-blue-gray-100 text-center py-3 px-4">
+                    Nama Minuman
                   </th>
-                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                  <th className="hidden sm:table-cell border-y border-blue-gray-100 py-3 px-4">
                     Kategori
                   </th>
-                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                  <th className="hidden sm:table-cell border-y border-blue-gray-100 py-3 px-4">
                     Harga
                   </th>
-                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                  <th className="hidden sm:table-cell border-y border-blue-gray-100 py-3 px-4">
                     Deskripsi
                   </th>
-                  <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                  <th className="border-y border-blue-gray-100 py-3 px-4">
                     Aksi
                   </th>
                 </tr>
@@ -134,41 +141,47 @@ const Konten = () => {
                   <tr key={minuman.id}>
                     <td>
                       <CiCircleInfo
-                        className="h-7 w-7 m-auto text-blue-500 cursor-pointer hover:text-black duration-300 "
-                        onClick={() => tampilkanDetailPengguna(pengguna)}
+                        className="h-7 w-7 m-auto text-blue-500 cursor-pointer hover:text-black duration-300"
+                        onClick={() => tampilkanDetailMinuman(minuman)}
                       />
                     </td>
-                    <td className="p-4 flex items-center justify-center">
+                    <td className="hidden sm:table-cell p-4">
                       <Image
                         src={minuman.Gambar_Minuman || fotoMinuman}
                         alt={minuman.Nama_Minuman}
                         width={50}
                         height={50}
-                        className="rounded-md shadow-md"
+                        className="rounded-md shadow-md mx-auto"
                       />
                     </td>
-                    <td className="p-4">{minuman.Nama_Minuman}</td>
-                    <td className="p-4">{minuman.Kategori_Minuman}</td>
-                    <td className="p-4">
+                    <td className="p-4 max-w-[150px] truncate">
+                      {minuman.Nama_Minuman}
+                    </td>
+                    <td className="p-4 hidden sm:table-cell max-w-[50px] truncate">
+                      {minuman.Kategori_Minuman}
+                    </td>
+                    <td className="p-4 hidden sm:table-cell">
                       {formatRupiah(minuman.Harga_Minuman)}
                     </td>
-                    <td className="p-4">{minuman.Deskripsi_Minuman}</td>
+                    <td className="p-4 hidden sm:table-cell">
+                      {minuman.Deskripsi_Minuman}
+                    </td>
                     <td className="p-4">
-                      <div className="flex justify-center items-center gap-4">
+                      <div className="flex flex-row justify-center items-center gap-2">
                         <Button
                           onClick={() => {
                             setMinumanYangTerpilih(minuman.id);
                             setModalEditTerbuka(true);
                           }}
                           size="sm"
-                          className="text-blue-500 hover:text-blue-700 bg-transparent"
+                          className="text-blue-500 hover:text-blue-700 bg-transparent flex items-center justify-center"
                         >
                           <FaEdit />
                         </Button>
                         <Button
                           onClick={() => konfirmasiHapus(minuman.id)}
                           size="sm"
-                          className="text-blue-500 hover:text-blue-700 bg-transparent"
+                          className="text-blue-500 hover:text-blue-700 bg-transparent flex items-center justify-center"
                         >
                           <FaTrashAlt />
                         </Button>
@@ -181,11 +194,17 @@ const Konten = () => {
           )}
         </div>
 
-        <div className="flex justify-between items-center mt-4">
-          <Typography variant="small" color="blue-gray" className="font-normal">
-            Halaman {halaman} dari {Math.ceil(totalMinuman / itemsPerPage)}
-          </Typography>
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row justify-between items-center mt-4 text-center">
+          <div className="order-2 sm:order-1 mt-2 sm:mt-0">
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="font-normal"
+            >
+              Halaman {halaman} dari {Math.ceil(totalMinuman / itemsPerPage)}
+            </Typography>
+          </div>
+          <div className="flex items-center gap-2 order-1 sm:order-2">
             <Button
               onClick={ambilHalamanSebelumnya}
               variant="outlined"
@@ -222,6 +241,11 @@ const Konten = () => {
         minumanYangTerpilih={minumanYangTerpilih}
         konfirmasiHapusMinuman={hapus}
         sedangMemuatHapus={sedangMemuatHapusMinuman}
+      />
+      <ModalDetailMinuman
+        terbuka={modalDetailTerbuka}
+        tertutup={setModalDetailTerbuka}
+        minuman={minumanYangTerpilih}
       />
     </div>
   );
