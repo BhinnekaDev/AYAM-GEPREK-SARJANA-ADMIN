@@ -9,6 +9,7 @@ import {
   CardFooter,
 } from "@material-tailwind/react";
 import Image from "next/image";
+import { FaEye, FaRegTrashAlt } from "react-icons/fa";
 
 // Gambar Profil
 const fotoProfil = require("@/assets/images/profil.jpg");
@@ -22,7 +23,7 @@ const dataTestimonial = [
     Nama_Menu: "Ayam Goreng",
     Rating: 4,
     Komentar:
-      "Ayam gorengnya sangat lezat, bumbunya meresap! Ayam gorengnya sangat lezat, bumbunya meresap! Ayam gorengnya sangat lezat, bumbunya meresap! Ayam gorengnya sangat lezat, bumbunya meresap!Ayam gorengnya sangat lezat, bumbunya meresap!",
+      "Ayam gorengnya sangat lezat, bumbunya meresap! Ayam gorengnya sangat lezat, bumbunya meresap! Ayam gorengnya sangat lezat, bumbunya meresap!",
   },
   {
     id: 2,
@@ -46,9 +47,17 @@ function Konten() {
     if (halaman < Math.ceil(totalTestimonial / 5)) setHalaman(halaman + 1);
   };
 
+  const tanganiLihat = () => {
+    alert("Fungsi lihat belum diimplementasikan!");
+  };
+
+  const konfirmasiHapus = () => {
+    alert("Fungsi hapus belum diimplementasikan!");
+  };
+
   return (
     <div>
-      <Card className=" bg-white shadow-md mb-5">
+      <Card className="bg-white shadow-md mb-5">
         <div className="w-full flex justify-between text-blue-gray-900 p-4">
           <div className="space-y-2">
             <Typography variant="h5">Total Testimonial</Typography>
@@ -74,9 +83,16 @@ function Konten() {
             <thead>
               <tr>
                 <th className="border-y py-3 px-4">Nama Lengkap</th>
-                <th className="border-y py-3 px-4">Nama Menu</th>
-                <th className="border-y py-3 px-4 text-center">Rating</th>
-                <th className="border-y py-3 px-4 text-center">Komentar</th>
+                <th className="border-y py-3 px-4 hidden sm:table-cell">
+                  Nama Menu
+                </th>
+                <th className="border-y py-3 px-4 text-center hidden sm:table-cell">
+                  Rating
+                </th>
+                <th className="border-y py-3 px-4 text-center hidden sm:table-cell">
+                  Komentar
+                </th>
+                <th className="border-y py-3 px-4 text-center">Aksi</th>
               </tr>
             </thead>
             <tbody>
@@ -100,17 +116,40 @@ function Konten() {
                       </Typography>
                     </div>
                   </td>
-                  <td className="p-4">{testimonial.Nama_Menu}</td>
-                  <td className="p-4 text-center">{testimonial.Rating}</td>
-                  <td className="p-4 text-left max-w-sm">
+                  <td className="p-4 hidden sm:table-cell">
+                    {testimonial.Nama_Menu}
+                  </td>
+                  <td className="p-4 text-center hidden sm:table-cell">
+                    {testimonial.Rating}
+                  </td>
+                  <td className="p-4 text-left max-w-sm hidden sm:table-cell">
                     {testimonial.Komentar}
+                  </td>
+                  <td className="p-4">
+                    <div className="flex flex-row justify-center items-center gap-2">
+                      <Button
+                        color="green"
+                        size="sm"
+                        className="text-blue-500 hover:text-blue-700 bg-transparent"
+                        onClick={tanganiLihat}
+                      >
+                        <FaEye className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        color="green"
+                        size="sm"
+                        className="text-blue-500 hover:text-blue-700 bg-transparent"
+                        onClick={konfirmasiHapus}
+                      >
+                        <FaRegTrashAlt className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </CardBody>
-
         <CardFooter className="flex items-center justify-between border-t p-4">
           <Typography variant="small" color="blue-gray" className="font-normal">
             Halaman {halaman} dari {Math.ceil(totalTestimonial / 5)}

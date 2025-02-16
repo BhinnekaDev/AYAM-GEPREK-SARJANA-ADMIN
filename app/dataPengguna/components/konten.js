@@ -156,7 +156,7 @@ function Konten() {
                           : pengguna.Alamat.Alamat_Detail
                         : "-"}
                     </td>
-                    <td className="p-2 sm:flex justify-center">
+                    <td className="p-2  sm:flex justify-center">
                       <Button
                         color="red"
                         size="sm"
