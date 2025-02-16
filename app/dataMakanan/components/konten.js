@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, Typography, Button } from "@material-tailwind/react";
+import { Card, CardFooter, Typography, Button } from "@material-tailwind/react";
 import Image from "next/image";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { CiCircleInfo } from "react-icons/ci";
@@ -202,17 +202,11 @@ const Konten = () => {
           )}
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-between items-center mt-4 text-center">
-          <div className="order-2 sm:order-1 mt-2 sm:mt-0">
-            <Typography
-              variant="small"
-              color="blue-gray"
-              className="font-normal"
-            >
-              Halaman {halaman} dari {Math.ceil(totalMakanan / itemsPerPage)}
-            </Typography>
-          </div>
-          <div className="flex items-center gap-2 order-1 sm:order-2">
+        <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
+          <Typography variant="small" color="blue-gray" className="font-normal">
+            Halaman {halaman} dari {Math.ceil(totalMakanan / itemsPerPage)}
+          </Typography>
+          <div className="flex items-center gap-2">
             <Button
               onClick={ambilHalamanSebelumnya}
               variant="outlined"
@@ -230,7 +224,7 @@ const Konten = () => {
               Berikutnya
             </Button>
           </div>
-        </div>
+        </CardFooter>
       </Card>
       <ModalTambahMenuMakanan
         terbuka={modalTerbuka}
