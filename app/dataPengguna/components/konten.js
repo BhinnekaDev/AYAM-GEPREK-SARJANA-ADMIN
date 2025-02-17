@@ -114,7 +114,16 @@ function Konten() {
                     </td>
                     <td className="text-center">{pengguna.Email}</td>
                     <td className="text-center">{pengguna.No_Telepon}</td>
-                    <td className="text-center">{pengguna.Alamat}</td>
+                    <td
+                      className="hidden sm:table-cell text-center max-w-[180px] truncate"
+                      title={`${pengguna.Alamat.Alamat_Jalan} ${pengguna.Alamat.Alamat_Detail}, RT${pengguna.Alamat.RT}/RW${pengguna.Alamat.RW}, ${pengguna.Alamat.Kecamatan}, ${pengguna.Alamat.Kota}, ${pengguna.Alamat.Provinsi}, ${pengguna.Alamat.Kode_Pos}`}
+                    >
+                      {pengguna.Alamat
+                        ? pengguna.Alamat.Alamat_Detail.length > 40
+                          ? pengguna.Alamat.Alamat_Detail.slice(0, 40) + "..."
+                          : pengguna.Alamat.Alamat_Detail
+                        : "-"}
+                    </td>
                     <td className="flex justify-center">
                       <Button
                         color="red"
