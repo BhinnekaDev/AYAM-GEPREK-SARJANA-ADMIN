@@ -11,6 +11,7 @@ export async function DELETE(req) {
 
     await auth.deleteUser(id);
     await firestore.collection("admin").doc(id).delete();
+    await firestore.collection("pengguna").doc(id).delete();
 
     return NextResponse.json(
       { message: "Admin berhasil dihapus." },
