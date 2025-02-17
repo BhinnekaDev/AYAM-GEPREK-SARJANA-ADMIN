@@ -11,7 +11,6 @@ import {
   MenuHandler,
   MenuList,
   MenuItem,
-  Dialog,
 } from "@material-tailwind/react";
 import Image from "next/image";
 import { LuListFilter } from "react-icons/lu";
@@ -68,7 +67,7 @@ function Konten() {
   };
 
   return (
-    <div>
+    <div className="overflow-hidden">
       <Card className="max-screen bg-white shadow-md mb-5">
         <div className="w-full flex justify-between text-blue-gray-900 p-4">
           <div className="space-y-2">
@@ -123,16 +122,16 @@ function Konten() {
             <table className="w-full min-w-max table-auto text-left">
               <thead>
                 <tr>
-                  <th className="border-y border-blue-gray-100 py-3 px-4">
+                  <th className=" border-y border-blue-gray-100 py-3 px-4">
                     Admin
                   </th>
-                  <th className="border-y border-blue-gray-100 py-2 px-4 text-center">
+                  <th className="hidden sm:table-cell border-y border-blue-gray-100 py-2 px-4 text-center">
                     Fungsi
                   </th>
-                  <th className="border-y border-blue-gray-100 py-2 px-4 text-center">
+                  <th className="hidden sm:table-cell border-y border-blue-gray-100 py-2 px-4 text-center">
                     Status
                   </th>
-                  <th className="border-y border-blue-gray-100 py-2 px-4 text-center">
+                  <th className="hidden sm:table-cell border-y border-blue-gray-100 py-2 px-4 text-center">
                     Tanggal Pembuatan Akun
                   </th>
                   <th className="border-y border-blue-gray-100 text-center">
@@ -168,30 +167,29 @@ function Konten() {
                         </Typography>
                       </div>
                     </td>
-                    <td className="text-center">{admin.Peran_Admin}</td>
-                    <td className="text-center">
+
+                    <td className="text-center hidden md:table-cell">
+                      {admin.Peran_Admin}
+                    </td>
+
+                    <td className="text-center hidden md:table-cell">
                       <span
                         className={(() => {
-                          const adminIdInStorage = localStorage.getItem(
+                          const adminIdInStorage = sessionStorage.getItem(
                             admin.id
                           );
-                          if (adminIdInStorage) {
-                            return "bg-green-500 bg-opacity-15 text-green-500 text-xs px-4 py-2 uppercase font-bold rounded-lg tracking-wider inline-block";
-                          } else {
-                            return "bg-red-500 bg-opacity-15 text-red-500 text-xs px-4 py-2 uppercase font-bold tracking-wider rounded-lg inline-block";
-                          }
+                          return adminIdInStorage
+                            ? "bg-green-500 bg-opacity-15 text-green-500 text-xs px-4 py-2 uppercase font-bold rounded-lg tracking-wider inline-block"
+                            : "bg-red-500 bg-opacity-15 text-red-500 text-xs px-4 py-2 uppercase font-bold tracking-wider rounded-lg inline-block";
                         })()}
                       >
-                        {(() => {
-                          const adminIdInStorage = localStorage.getItem(
-                            admin.id
-                          );
-                          return adminIdInStorage ? "Aktif" : "Tidak Aktif";
-                        })()}
+                        {sessionStorage.getItem(admin.id)
+                          ? "Aktif"
+                          : "Tidak Aktif"}
                       </span>
                     </td>
 
-                    <td className="text-center">
+                    <td className="text-center hidden md:table-cell">
                       {admin.Tanggal_Pembuatan_Akun
                         ? format(
                             new Date(
@@ -201,23 +199,26 @@ function Konten() {
                           )
                         : "Tidak Diketahui"}
                     </td>
-                    <td className="flex justify-center">
-                      <Button
-                        size="sm"
-                        className="text-blue-500 hover:text-blue-700 bg-transparent"
-                        onClick={() => tanganiSunting(admin.id)}
-                        disabled={admin.Peran_Admin !== "Admin"}
-                      >
-                        <FaEdit />
-                      </Button>
-                      <Button
-                        size="sm"
-                        className="text-blue-500 hover:text-blue-700 bg-transparent"
-                        onClick={() => konfirmasiHapus(admin.id)}
-                        disabled={admin.Peran_Admin !== "Admin"}
-                      >
-                        <FaTrashAlt />
-                      </Button>
+
+                    <td className="p-4">
+                      <div className="flex flex-row justify-center items-center gap-2">
+                        <Button
+                          size="sm"
+                          className="text-blue-500 hover:text-blue-700 bg-transparent"
+                          onClick={() => tanganiSunting(admin.id)}
+                          disabled={admin.Peran_Admin !== "Admin"}
+                        >
+                          <FaEdit />
+                        </Button>
+                        <Button
+                          size="sm"
+                          className="text-blue-500 hover:text-blue-700 bg-transparent"
+                          onClick={() => konfirmasiHapus(admin.id)}
+                          disabled={admin.Peran_Admin !== "Admin"}
+                        >
+                          <FaTrashAlt />
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -227,7 +228,7 @@ function Konten() {
         </CardBody>
 
         <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-          <Typography variant="small" color="blue-gray" className="font-normal">
+          <Typography variant="small" color="blue-gray" className="font-light">
             Halaman {halaman} dari {Math.ceil(totalAdmin / 5)}
           </Typography>
           <div className="flex items-center gap-2">
