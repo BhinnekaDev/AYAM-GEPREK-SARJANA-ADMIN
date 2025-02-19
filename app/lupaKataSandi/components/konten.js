@@ -1,20 +1,18 @@
 import React, { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+// Pengait
+import useLupaKataSandiAdmin from "@/hooks/Backend/useLupaKataSandiAdmin";
 
 const Konten = () => {
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { kirimEmailReset, sedangMemuat } = useLupaKataSandiAdmin();
 
-  const kirimEmailReset = async (e) => {
+  const tanganiSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-
-    setTimeout(() => {
-      toast.success("Email reset kata sandi telah dikirim!");
-      setLoading(false);
-    }, 2000);
+    await kirimEmailReset(email);
   };
 
   return (
@@ -31,13 +29,13 @@ const Konten = () => {
           <Typography className="text-base sm:text-xl text-gray-600 mb-8 sm:mb-12">
             Masukkan email untuk mengatur ulang konfirmasi kata sandi baru
           </Typography>
-          <form onSubmit={kirimEmailReset} className="space-y-6 sm:space-y-8">
+          <form onSubmit={tanganiSubmit} className="space-y-6 sm:space-y-8">
             <Input
               label="Masukkan Email"
               type="email"
               required
               variant="outlined"
-              className="w-full bg-gray-100 rounded-lg py-4 sm:py-5 text-gray-800 "
+              className="w-full bg-gray-100 rounded-lg py-4 sm:py-5 text-gray-800"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -46,9 +44,9 @@ const Konten = () => {
               color="yellow"
               variant="filled"
               className="w-full py-2 sm:py-3 text-black bg-yellow-400 hover:bg-yellow-500 rounded-lg text-base"
-              disabled={loading}
+              disabled={sedangMemuat}
             >
-              {loading ? "Mengirim..." : "KIRIM"}
+              {sedangMemuat ? "Mengirim..." : "KIRIM"}
             </Button>
           </form>
         </Card>
