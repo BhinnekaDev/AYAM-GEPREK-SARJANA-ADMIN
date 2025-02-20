@@ -140,8 +140,12 @@ function Konten() {
                         </Typography>
                       </div>
                     </td>
-                    <td className="hidden sm:table-cell text-center">{pengguna.Email}</td>
-                    <td className="hidden sm:table-cell text-center">{pengguna.No_Telepon}</td>              
+                    <td className="hidden sm:table-cell text-center">
+                      {pengguna.Email}
+                    </td>
+                    <td className="hidden sm:table-cell text-center">
+                      {pengguna.No_Telepon}
+                    </td>
                     <td
                       className="hidden sm:table-cell text-center max-w-[180px] truncate"
                       title={`${pengguna.Alamat.Alamat_Jalan} ${pengguna.Alamat.Alamat_Detail}, RT${pengguna.Alamat.RT}/RW${pengguna.Alamat.RW}, ${pengguna.Alamat.Kecamatan}, ${pengguna.Alamat.Kota}, ${pengguna.Alamat.Provinsi}, ${pengguna.Alamat.Kode_Pos}`}

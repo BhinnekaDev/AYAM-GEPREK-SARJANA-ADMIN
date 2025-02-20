@@ -10,6 +10,8 @@ import {
 } from "@material-tailwind/react";
 import Image from "next/image";
 import { FaEye, FaRegTrashAlt } from "react-icons/fa";
+import ModalKonfirmasiHapusTestimoni from "@/components/modalKonfirmasiHapusTestimoni";
+import ModalLihatTestimoni from "@/components/modalLihatTestimoni";
 
 // Gambar Profil
 const fotoProfil = require("@/assets/images/profil.jpg");
@@ -38,6 +40,30 @@ const dataTestimonial = [
 function Konten() {
   const [halaman, setHalaman] = useState(1);
   const totalTestimonial = dataTestimonial.length;
+  const [bukaModalHapusTestimoni, setBukaModalHapusTestimoni] = useState(false);
+  const [testimoniTerpilih, setTestimoniTerpilih] = useState(null);
+  const [bukaModalLihat, setBukaModalLihat] = useState(false);
+  const [testimoniLihat, setTestimoniLihat] = useState(null);
+
+  const bukaModalLihatTestimoni = (testimoni) => {
+    setTestimoniLihat(testimoni);
+    setBukaModalLihat(true);
+  };
+
+  const tutupModalLihatTestimoni = () => {
+    setBukaModalLihat(false);
+    setTestimoniLihat(null);
+  };
+
+  const bukaModalHapus = (testimoni) => {
+    setTestimoniTerpilih(testimoni);
+    setBukaModalHapusTestimoni(true);
+  };
+
+  const tutupModalHapus = () => {
+    setBukaModalHapusTestimoni(false);
+    setTestimoniTerpilih(null);
+  };
 
   const ambilHalamanSebelumnya = () => {
     if (halaman > 1) setHalaman(halaman - 1);
@@ -45,10 +71,6 @@ function Konten() {
 
   const ambilHalamanSelanjutnya = () => {
     if (halaman < Math.ceil(totalTestimonial / 5)) setHalaman(halaman + 1);
-  };
-
-  const tanganiLihat = () => {
-    alert("Fungsi lihat belum diimplementasikan!");
   };
 
   const konfirmasiHapus = () => {
@@ -131,7 +153,7 @@ function Konten() {
                         color="green"
                         size="sm"
                         className="text-blue-500 hover:text-blue-700 bg-transparent"
-                        onClick={tanganiLihat}
+                        onClick={() => bukaModalLihatTestimoni(testimonial)}
                       >
                         <FaEye className="w-4 h-4" />
                       </Button>
@@ -139,7 +161,7 @@ function Konten() {
                         color="green"
                         size="sm"
                         className="text-blue-500 hover:text-blue-700 bg-transparent"
-                        onClick={konfirmasiHapus}
+                        onClick={() => bukaModalHapus(testimonial)}
                       >
                         <FaRegTrashAlt className="w-4 h-4" />
                       </Button>
@@ -174,6 +196,17 @@ function Konten() {
           </div>
         </CardFooter>
       </Card>
+      <ModalKonfirmasiHapusTestimoni
+        terbuka={bukaModalHapusTestimoni}
+        tertutup={tutupModalHapus}
+        testimoniYangTerpilih={testimoniTerpilih}
+        konfirmasiHapusTestimoni={konfirmasiHapus}
+      />
+      <ModalLihatTestimoni
+        terbuka={bukaModalLihat}
+        tertutup={tutupModalLihatTestimoni}
+        testimoni={testimoniLihat}
+      />
     </div>
   );
 }
