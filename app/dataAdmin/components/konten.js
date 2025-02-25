@@ -175,7 +175,7 @@ function Konten() {
                     <td className="text-center hidden md:table-cell">
                       <span
                         className={(() => {
-                          const adminIdInStorage = sessionStorage.getItem(
+                          const adminIdInStorage = localStorage.getItem(
                             admin.id
                           );
                           return adminIdInStorage
@@ -183,7 +183,7 @@ function Konten() {
                             : "bg-red-500 bg-opacity-15 text-red-500 text-xs px-4 py-2 uppercase font-bold tracking-wider rounded-lg inline-block";
                         })()}
                       >
-                        {sessionStorage.getItem(admin.id)
+                        {localStorage.getItem(admin.id)
                           ? "Aktif"
                           : "Tidak Aktif"}
                       </span>
